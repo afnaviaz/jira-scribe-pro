@@ -6,112 +6,143 @@ const ITEMS_PER_PAGE = 5;
 const CasosGuardadosScreen = ({ onBack }) => {
   const [casosGuardados, setCasosGuardados] = useState([]);
   const [pagina, setPagina] = useState(1);
-  const [expandedSprint, setExpandedSprint] = useState(null);
-  const [editData, setEditData] = useState({}); // {storyKey: [casosEditados]}
+  const [editData, setEditData] = useState({}); // {storyKey: { idx: { text, status, evidence } }}
 
-  // Cargar casos guardados
   useEffect(() => {
     axios.get('http://localhost:5001/api/test-cases')
       .then(res => setCasosGuardados(res.data))
       .catch(err => console.error('Error al cargar casos guardados:', err));
   }, []);
 
-  // Agrupar por sprint
-  const casosPorSprint = casosGuardados.reduce((acc, caso) => {
-    const sprint = caso.sprintName || 'Sin Sprint';
-    if (!acc[sprint]) acc[sprint] = [];
-    acc[sprint].push(caso);
-    return acc;
-  }, {});
+  const todasLasHistorias = casosGuardados.map(caso => ({
+    ...caso,
+    sprint: caso.sprintName || 'Sin Sprint'
+  }));
 
-  const sprintNames = Object.keys(casosPorSprint);
+  const historiasPaginadas = todasLasHistorias.slice((pagina - 1) * ITEMS_PER_PAGE, pagina * ITEMS_PER_PAGE);
 
-  // Paginación de historias de usuario (por sprint)
-  const paginatedSprintNames = sprintNames.slice((pagina - 1) * ITEMS_PER_PAGE, pagina * ITEMS_PER_PAGE);
-
-  // Manejar edición de casos
   const handleEditChange = (storyKey, idx, value) => {
     setEditData(prev => ({
       ...prev,
       [storyKey]: {
         ...prev[storyKey],
-        [idx]: value
+        [idx]: {
+          ...prev[storyKey]?.[idx],
+          text: value
+        }
       }
     }));
   };
 
-  // Guardar cambios editados (puedes implementar el guardado en backend aquí)
+  const handleStatusChange = (storyKey, idx, status) => {
+    setEditData(prev => ({
+      ...prev,
+      [storyKey]: {
+        ...prev[storyKey],
+        [idx]: {
+          ...prev[storyKey]?.[idx],
+          status,
+          evidence: status === 'NOK' ? prev[storyKey]?.[idx]?.evidence ?? '' : ''
+        }
+      }
+    }));
+  };
+
+  const handleEvidenceChange = (storyKey, idx, evidence) => {
+    setEditData(prev => ({
+      ...prev,
+      [storyKey]: {
+        ...prev[storyKey],
+        [idx]: {
+          ...prev[storyKey]?.[idx],
+          evidence
+        }
+      }
+    }));
+  };
+
   const handleSave = (caso) => {
-    const nuevosCasos = caso.testCases.map((test, idx) =>
-      editData[caso.storyKey] && editData[caso.storyKey][idx] !== undefined
-        ? editData[caso.storyKey][idx]
-        : test
-    );
-    // Aquí puedes hacer un POST/PUT para guardar los cambios en el backend
+    const nuevosCasos = caso.testCases.map((test, idx) => ({
+      text: editData[caso.storyKey]?.[idx]?.text ?? (typeof test === 'string' ? test : test.text),
+      status: editData[caso.storyKey]?.[idx]?.status ?? (typeof test === 'object' ? test.status : 'Pendiente'),
+      evidence: editData[caso.storyKey]?.[idx]?.evidence ?? (typeof test === 'object' ? test.evidence : '')
+    }));
     axios.post('http://localhost:5001/api/test-cases/save', {
       ...caso,
       testCases: nuevosCasos
     }).then(() => {
       alert('Casos de prueba actualizados');
+      axios.get('http://localhost:5001/api/test-cases')
+        .then(res => setCasosGuardados(res.data));
     });
+  };
+
+  // Simulación de exportar a Jira
+  const exportToJira = (caso, idx) => {
+    const testCase = editData[caso.storyKey]?.[idx] ?? (typeof caso.testCases[idx] === 'object' ? caso.testCases[idx] : { text: caso.testCases[idx], status: 'Pendiente', evidence: '' });
+    alert(`Exportando a Jira:\nHistoria: ${caso.storyKey}\nEstado: ${testCase.status}\nEvidencia: ${testCase.evidence}\nTexto: ${testCase.text}`);
+    // Aquí deberías llamar a tu endpoint real de exportación a Jira
   };
 
   return (
     <div>
       <h2>Casos de Prueba Guardados</h2>
-      {paginatedSprintNames.length === 0 ? (
+      {historiasPaginadas.length === 0 ? (
         <div>No hay casos guardados.</div>
       ) : (
-        paginatedSprintNames.map(sprint => (
-          <div key={sprint} style={{ marginBottom: 20 }}>
-            <div
-              style={{
-                background: '#f0f0f0',
-                padding: 10,
-                cursor: 'pointer',
-                fontWeight: 'bold'
-              }}
-              onClick={() => setExpandedSprint(expandedSprint === sprint ? null : sprint)}
-            >
-              {sprint}
+        historiasPaginadas.map(caso => (
+          <div key={caso.storyKey} style={{ marginBottom: 20, border: '1px solid #ccc', padding: 10 }}>
+            <div style={{ fontWeight: 'bold', background: '#f0f0f0', padding: 8 }}>
+              {caso.sprint}
             </div>
-            {expandedSprint === sprint && (
-              <div style={{ padding: 10, border: '1px solid #ddd' }}>
-                {casosPorSprint[sprint].map(caso => (
-                  <div key={caso.storyKey} style={{ marginBottom: 20 }}>
-                    <h4>{caso.storyKey} - {caso.storySummary}</h4>
-                    {caso.testCases.map((test, idx) => (
-                      <textarea
-                        key={idx}
-                        value={
-                          editData[caso.storyKey] && editData[caso.storyKey][idx] !== undefined
-                            ? editData[caso.storyKey][idx]
-                            : test
-                        }
-                        onChange={e => handleEditChange(caso.storyKey, idx, e.target.value)}
-                        rows={3}
-                        style={{ width: '100%', marginBottom: 8 }}
-                      />
-                    ))}
-                    <button onClick={() => handleSave(caso)}>Guardar Cambios</button>
-                  </div>
-                ))}
-              </div>
-            )}
+            <h4>{caso.storyKey} - {caso.storySummary}</h4>
+            {caso.testCases.map((test, idx) => {
+              const testObj = typeof test === 'object' ? test : { text: test, status: 'Pendiente', evidence: '' };
+              const editObj = editData[caso.storyKey]?.[idx] ?? {};
+              return (
+                <div key={idx} style={{ display: 'flex', alignItems: 'flex-start', marginBottom: 12 }}>
+                  <textarea
+                    value={editObj.text ?? testObj.text}
+                    onChange={e => handleEditChange(caso.storyKey, idx, e.target.value)}
+                    rows={8}
+                    style={{ width: '60%', marginRight: 8 }}
+                  />
+                  <select
+                    value={editObj.status ?? testObj.status}
+                    onChange={e => handleStatusChange(caso.storyKey, idx, e.target.value)}
+                    style={{ marginRight: 8 }}
+                  >
+                    <option value="Pendiente">Pendiente</option>
+                    <option value="OK">OK</option>
+                    <option value="NOK">NOK</option>
+                  </select>
+                  {(editObj.status ?? testObj.status) === 'NOK' && (
+                    <input
+                      type="text"
+                      placeholder="Enlace de evidencia"
+                      value={editObj.evidence ?? testObj.evidence}
+                      onChange={e => handleEvidenceChange(caso.storyKey, idx, e.target.value)}
+                      style={{ marginRight: 8, width: 180 }}
+                    />
+                  )}
+                  <button onClick={() => exportToJira(caso, idx)}>Exportar a Jira</button>
+                </div>
+              );
+            })}
+            <button onClick={() => handleSave(caso)}>Guardar Cambios</button>
           </div>
         ))
       )}
 
       {/* Paginador */}
-      {sprintNames.length > ITEMS_PER_PAGE && (
+      {todasLasHistorias.length > ITEMS_PER_PAGE && (
         <div style={{ marginTop: 20 }}>
           <button onClick={() => setPagina(pagina - 1)} disabled={pagina === 1}>Anterior</button>
-          <span style={{ margin: '0 10px' }}>Página {pagina} de {Math.ceil(sprintNames.length / ITEMS_PER_PAGE)}</span>
-          <button onClick={() => setPagina(pagina + 1)} disabled={pagina === Math.ceil(sprintNames.length / ITEMS_PER_PAGE)}>Siguiente</button>
+          <span style={{ margin: '0 10px' }}>Página {pagina} de {Math.ceil(todasLasHistorias.length / ITEMS_PER_PAGE)}</span>
+          <button onClick={() => setPagina(pagina + 1)} disabled={pagina === Math.ceil(todasLasHistorias.length / ITEMS_PER_PAGE)}>Siguiente</button>
         </div>
       )}
 
-      {/* Botón para volver */}
       <button onClick={onBack} style={{ marginTop: 20 }}>
         Volver
       </button>
