@@ -3,26 +3,11 @@ import { AppContext } from '../context/AppContext';
 
 // URL base para los enlaces a Jira
 const JIRA_BASE_URL = "https://finkargo.atlassian.net/browse/";
-
 // Componente de ícono de ojo para previsualizar en Jira
 const EyeIcon = () => (
-  <svg width="20" height="20" fill="none" viewBox="0 0 24 24">
-    <path
-      d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z"
-      stroke="#222"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
-    <circle
-      cx="12"
-      cy="12"
-      r="3"
-      stroke="#222"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    />
+  <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" />
+    <circle cx="12" cy="12" r="3" />
   </svg>
 );
 
@@ -60,65 +45,71 @@ const StoryList = () => {
 
   return (
     <div className="story-list-container">
-      <h3></h3>
-      <table className="story-table">
-        <thead>
-          <tr>
-            <th className="story-table-header" style={{ width: 40 }}></th>
-            <th className="story-table-header" style={{ width: 100 }}>Clave</th>
-            <th className="story-table-header" style={{ width: 'auto' }}>Resumen</th>
-            <th className="story-table-header" style={{ width: 60 }}>Ver</th>
-          </tr>
-        </thead>
-        <tbody>
-          {paginatedStories.map(story => (
-            <tr key={story.id}>
-              <td style={{ textAlign: 'center' }}>
-                {/* Checkbox para seleccionar/deseleccionar historia */}
-                <input
-                  type="checkbox"
-                  disabled={storiesWithCases.includes(story.key)} // Deshabilita si ya tiene casos generados
-                  checked={selectedStories.some(s => s.id === story.id)}
-                  onChange={() => handleSelectStory(story)}
-                  id={`story-${story.id}`}
-                />
-              </td>
-              {/* Clave de la historia */}
-              <td className="story-key-cell">
-                {story.key}
-                {storiesWithCases.includes(story.key) && (
-                  <span className="story-tag">FK</span>
-                )}
-              </td>
-              {/* Resumen de la historia */}
-              <td className="story-summary-cell">
-                {story.fields.summary}
-              </td>
-              <td className="story-action-cell">
-                {/* Enlace para abrir la historia en Jira */}
-                <a
-                  href={`${JIRA_BASE_URL}${story.key}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  title="Ver en Jira"
-                  style={{ display: 'inline-block', verticalAlign: 'middle' }}
-                >
-                  <EyeIcon />
-                </a>
-              </td>
+      <h3 className="story-list-title">Historias de Usuario</h3>
+      <div className="story-table-wrapper">
+        <table className="story-table">
+          <thead>
+            <tr>
+              <th style={{ width: '5%' }}></th>
+              <th style={{ width: '15%' }}>Clave</th>
+              <th style={{ width: '70%' }}>Resumen</th>
+              <th style={{ width: '10%', textAlign: 'center' }}>Jira</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {paginatedStories.map(story => {
+              const isSelected = selectedStories.some(s => s.id === story.id);
+              const isDisabled = storiesWithCases.includes(story.key);
+              return (
+                <tr
+                  key={story.id}
+                  className={`story-row ${isSelected ? 'selected' : ''} ${isDisabled ? 'disabled' : ''}`}
+                  onClick={() => handleSelectStory(story)}
+                >
+                  <td>
+                    <div className="custom-checkbox">
+                      <input
+                        type="checkbox"
+                        disabled={isDisabled}
+                        checked={isSelected}
+                        readOnly
+                      />
+                      <span className="checkmark"></span>
+                    </div>
+                  </td>
+                  <td className="story-key-cell">
+                    <span>{story.key}</span>
+                    {/* Eliminamos la etiqueta "Generado" */}
+                  </td>
+                  <td className="story-summary-cell">
+                    {story.fields.summary}
+                  </td>
+                  <td className="story-action-cell">
+                    <a
+                      href={`${JIRA_BASE_URL}${story.key}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="Ver en Jira"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <EyeIcon />
+                    </a>
+                  </td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+      </div>
       {/* Controles de paginación */}
       <div className="pagination-controls">
-        <button onClick={() => setPage(page - 1)} disabled={page === 1}>
+        <button className="pagination-button" onClick={() => setPage(page - 1)} disabled={page === 1}>
           Anterior
         </button>
-        <span>
+        <span className="pagination-info">
           Página {page} de {totalPages}
         </span>
-        <button onClick={() => setPage(page + 1)} disabled={page === totalPages}>
+        <button className="pagination-button" onClick={() => setPage(page + 1)} disabled={page === totalPages}>
           Siguiente
         </button>
       </div>

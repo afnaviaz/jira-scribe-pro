@@ -37,5 +37,422 @@
       "Scenario 13: Tabla de decisión para suma correcta de intereses #\n  ###############################################################\n\n  # Condiciones:\n  # C1: Mora Tasa corriente > 0\n  # C2: Restante Par 60 > 0\n  # C3: Restante Par 61 > 0\n  #\n  # Acción:\n  # A1: Sumar solo valores positivos para total de Intereses de Mora\n  # A2: Ignorar valores negativos o no numéricos\n  #\n  # Tabla de decisión:\n\n  # | C1 | C2 | C3 | A1 (Suma) | A2 (Ignorar negativos) |\n  # |----|----|----|-----------|-----------------------|\n  # | Y  | Y  | Y  | suma todos| no aplica             |\n  # | Y  | Y  | N  | suma C1,C2| no aplica             |\n  # | Y  | N  | Y  | suma C1,C3| no aplica             |\n  # | N  | Y  | Y  | suma C2,C3| no aplica             |\n  # | Y  | N  | N  | suma C1   | no aplica             |\n  # | N  | Y  | N  | suma C2   | no aplica             |\n  # | N  | N  | Y  | suma C3   | no aplica             |\n  # | N  | N  | N  | suma 0    | no aplica             |",
       "Scenario 14: Outline 7: Validar suma de intereses según combinación de valores positivos y ceros\n    Given que el sistema tiene los siguientes valores de intereses:\n      | Tipo de interés               | Valor  |\n      | Mora Tasa corriente          | <tasa_corriente> |\n      | Restante Par 60              | <restante_par_60> |\n      | Restante Par 61              | <restante_par_61> |\n    When se genera la liquidación para el cliente\n    Then el monto total de \"Intereses de Mora\" es <total>\n\n    Examples:\n      | tasa_corriente | restante_par_60 | restante_par_61 | total  |\n      | 100.00         | 50.00           | 25.00           | 175.00 |\n      | 100.00         | 50.00           | 0.00            | 150.00 |\n      | 100.00         | 0.00            | 25.00           | 125.00 |\n      | 0.00           | 50.00           | 25.00           | 75.00  |\n      | 100.00         | 0.00            | 0.00            | 100.00 |\n      | 0.00           | 50.00           | 0.00            | 50.00  |\n      | 0.00           | 0.00            | 25.00           | 25.00  |\n      | 0.00           | 0.00            | 0.00            | 0.00   |"
     ]
+  },
+  {
+    "storyKey": "MKT-2345",
+    "storySummary": "Como diseñador UX/UI del dominio Control Tower en Finkargo, quiero analizar y definir la estructura de información, referencias y requerimientos del MVP, para crear un borrador inicial que sirva como base para el diseño e implementación de Control Tower.",
+    "testCases": [
+      "Scenario 1: s para validar el cumplimiento de cada criterio de aceptación y la disponibilidad de entregables, considerando también flujos alternativos y excepcionales.",
+      "Scenario 2: [Análisis de estructura actual] - Validación de cumplimiento de criterio de aceptación\n    Given que el diseñador UX/UI inicia el análisis de la estructura de información actual de la plataforma Finkargo\n    When se revisan y documentan las secciones, datos y flujos existentes\n    Then el análisis debe estar completado y documentado en un reporte accesible para el equipo",
+      "Scenario 3: [Investigación de referentes y buenas prácticas] - Validación de cumplimiento de criterio de aceptación\n    Given que el diseñador UX/UI investiga referentes de Control Towers en el mercado y buenas prácticas logísticas\n    When se recopila información relevante y se elabora un reporte de investigación\n    Then el reporte debe reflejar modelos eficientes y debe estar disponible para el equipo",
+      "Scenario 4: [Creación del borrador inicial de estructura] - Validación de cumplimiento de criterio de aceptación\n    Given que el diseñador UX/UI crea un borrador inicial para la estructura de Control Tower\n    When se identifican vistas principales, secciones y componentes clave\n    Then el borrador debe incluir el modelo de navegación y estar documentado para su revisión",
+      "Scenario 5: [Inclusión de \"Qué nos imaginamos\"] - Validación de criterio de aceptación\n    Given que el borrador inicial está siendo elaborado\n    When se define la visión del producto en la sección \"Qué nos imaginamos\"\n    Then esta sección debe estar claramente documentada dentro del borrador",
+      "Scenario 6: [Documentación de casuísticas principales] - Validación de criterio de aceptación\n    Given que se está documentando el diseño del MVP\n    When se incluyen casuísticas como seguimiento de mercancía, visualización de cotizaciones y gestión de alertas\n    Then estas casuísticas deben estar claramente descritas y justificadas en el borrador",
+      "Scenario 7: [Disponibilidad en herramienta colaborativa] - Validación de criterio de aceptación\n    Given que el borrador y los documentos de investigación están finalizados\n    When se suben a una herramienta colaborativa (Figma, Miro, etc.)\n    Then los documentos deben estar accesibles para el equipo de producto y stakeholders para revisión y retroalimentación",
+      "Scenario 8: [Revisión y retroalimentación del equipo] - Validación de criterio de aceptación\n    Given que el borrador inicial está disponible en la herramienta colaborativa\n    When el equipo de producto y stakeholders relevantes revisan el borrador\n    Then se debe registrar la retroalimentación y validación del borrador",
+      "Scenario 9: [Actualización y disponibilidad de documentación para desarrollo y diseño] - Validación de criterio de aceptación\n    Given que se ha recibido retroalimentación y validación del borrador\n    When se actualiza la documentación según comentarios recibidos\n    Then la documentación debe estar actualizada y disponible para el equipo de desarrollo y diseño\n\n  # E",
+      "Scenario 10: s alternativos y excepcionales",
+      "Scenario 11: [Fallo en la disponibilidad de herramienta colaborativa] - Caso excepcional\n    Given que el diseñador intenta subir los documentos a la herramienta colaborativa\n    When ocurre un fallo en el sistema o timeout durante la carga\n    Then se debe notificar el error y guardar los documentos localmente para reintentar posteriormente",
+      "Scenario 12: [Retrasos en la revisión por parte del equipo] - Flujo alternativo\n    Given que el borrador está disponible para revisión\n    When el equipo de producto y stakeholders no realizan la revisión en el plazo esperado\n    Then se debe enviar recordatorios y escalonar la comunicación para asegurar la retroalimentación oportuna",
+      "Scenario 13: [Información insuficiente en análisis de estructura actual] - Flujo alternativo\n    Given que el análisis de la estructura actual está en proceso\n    When se detecta que la información recopilada es insuficiente o incompleta\n    Then se debe ampliar la investigación y volver a documentar para cumplir con el criterio de aceptación",
+      "Scenario 14: [Desalineación con buenas prácticas del mercado] - Flujo alternativo\n    Given que se ha realizado la investigación de referentes\n    When el borrador inicial no refleja modelos eficientes o buenas prácticas\n    Then se debe revisar y ajustar el diseño para alinearlo con las mejores prácticas identificadas\n\n# Nota: Debido a la naturaleza exploratoria y de documentación de esta HU, no se aplican técnicas de partición de equivalencia, análisis de valores límite, tabla de decisión o pruebas de transición de estado en sentido clásico, ya que no se describen campos de entrada ni estados de objetos para validar. Los e",
+      "Scenario 15: s se centran en validar el cumplimiento de entregables y procesos definidos."
+    ]
+  },
+  {
+    "storyKey": "FDM-5588",
+    "storySummary": "[CO] Backend - Realizar la validación de bodegas y agentes",
+    "testCases": [
+      {
+        "text": "Scenario 1: s genéricos de validación de bodegas y agentes, \n  # aplicando técnicas ISTQB indicadas, asumiendo campos típicos de entrada y reglas comunes en este contexto.\n\n  # Suposiciones:\n  # - Campos típicos: Código de bodega (alfanumérico, longitud 3-10), Código de agente (numérico, 1-9999)\n  # - Estados de agente: activo, inactivo, suspendido\n  # - Reglas de negocio: solo agentes activos pueden asignarse a bodegas activas\n  # - Estados de bodega: activa, inactiva\n\n  # -----------------------------------------------------------------------\n  # E",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 2: s basados en Partición de Equivalencia y Análisis de Valores Límite\n  # -----------------------------------------------------------------------",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 3: Outline: [Partición de Equivalencia y Análisis de Valores Límite] Validar códigos de bodega y agente con valores límite y rangos válidos e inválidos\n    Given que el sistema está listo para validar códigos de bodega y agente\n    When ingreso el código de bodega \"<codigoBodega>\"\n    And ingreso el código de agente \"<codigoAgente>\"\n    Then el sistema valida si los códigos son válidos y muestra el mensaje \"<mensaje>\"\n\n    Examples:\n      | codigoBodega | codigoAgente | mensaje                                      |\n      | B01          | 1            | Códigos válidos                             |\n      | B0012345678  | 9999         | Códigos válidos                             |\n      | B           | 0            | Código de agente inválido                   |\n      | B00123456789 | 10000        | Código de bodega inválido; Código agente inválido |\n      |             | 500          | Código de bodega inválido                   |\n      | B123         | -1           | Código de agente inválido                   |\n      | B@#          | 50           | Código de bodega inválido                   |\n\n  # -----------------------------------------------------------------------\n  # E",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 4: s basados en Tabla de Decisión\n  # -----------------------------------------------------------------------\n\n  # Reglas asumidas para asignación de agentes a bodegas:\n  # Condiciones:\n  # 1. Bodega activa (Sí/No)\n  # 2. Agente activo (Sí/No)\n  # 3. Agente suspendido (Sí/No)\n  #\n  # Acción: Permitir asignación (Sí/No)\n  #\n  # Tabla de decisión:\n  # | Bodega Activa | Agente Activo | Agente Suspendido | Asignación Permitida |\n  # |--------------|---------------|-------------------|---------------------|\n  # | Sí           | Sí            | No                | Sí                  |\n  # | Sí           | No            | No                | No                  |\n  # | Sí           | Sí            | Sí                | No                  |\n  # | No           | Sí            | No                | No                  |\n  # | No           | No            | No                | No                  |\n  # | No           | Sí            | Sí                | No                  |",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 5: Outline: [Tabla de Decisión] Validar asignación de agentes a bodegas según estado de ambos\n    Given que la bodega está en estado \"<estadoBodega>\"\n    And el agente está en estado \"<estadoAgente>\"\n    When intento asignar el agente a la bodega\n    Then la asignación es \"<resultado>\"\n\n    Examples:\n      | estadoBodega | estadoAgente | resultado  |\n      | activa       | activo       | permitida  |\n      | activa       | inactivo     | denegada   |\n      | activa       | suspendido   | denegada   |\n      | inactiva     | activo       | denegada   |\n      | inactiva     | inactivo     | denegada   |\n      | inactiva     | suspendido   | denegada   |\n\n  # -----------------------------------------------------------------------\n  # E",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 6: s basados en Pruebas de Transición de Estado\n  # -----------------------------------------------------------------------\n\n  # Estados posibles de agente: activo, inactivo, suspendido\n  # Transiciones válidas:\n  # - inactivo -> activo\n  # - activo -> suspendido\n  # - suspendido -> activo\n  #\n  # Transiciones inválidas:\n  # - activo -> inactivo (no permitida)\n  # - suspendido -> inactivo (no permitida)",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 7: Outline: [Transición de Estado] Validar transiciones de estado de agente válidas e inválidas\n    Given que el agente está en estado inicial \"<estadoInicial>\"\n    When se intenta cambiar el estado del agente a \"<estadoDestino>\"\n    Then la transición es \"<resultado>\"\n\n    Examples:\n      | estadoInicial | estadoDestino | resultado  |\n      | inactivo      | activo       | válida     |\n      | activo        | suspendido   | válida     |\n      | suspendido    | activo       | válida     |\n      | activo        | inactivo     | inválida   |\n      | suspendido    | inactivo     | inválida   |\n\n  # -----------------------------------------------------------------------\n  # E",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 8: s de flujos alternativos y casos excepcionales\n  # -----------------------------------------------------------------------",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 9: [Partición de Equivalencia] Validar manejo de campos vacíos\n    Given que el usuario no ingresa ningún código de bodega ni agente\n    When intenta validar los códigos\n    Then el sistema muestra mensajes de error indicando que los campos son obligatorios",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 10: [Fallos del sistema] Simular fallo de conexión a base de datos durante validación\n    Given que el sistema está intentando validar códigos de bodega y agente\n    When ocurre un fallo de conexión a la base de datos\n    Then el sistema muestra un mensaje de error \"Error de conexión. Intente nuevamente más tarde.\"",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 11: [Timeout] Validar comportamiento cuando la validación tarda más de 10 segundos\n    Given que el sistema inicia la validación de códigos\n    When la validación excede el tiempo máximo permitido (10 segundos)\n    Then el sistema cancela la operación y muestra un mensaje de timeout\n\n# Fin Feature FDM-5588",
+        "status": "Pendiente",
+        "evidence": ""
+      }
+    ]
+  },
+  {
+    "sprintName": "Sprint Inno [2025] W24/W26",
+    "storyKey": "MKT-2358",
+    "storySummary": "Como dev, quiero migrar el endpoint de aplicación de recaudo y desembolso correspondiente al flujo de tesorería del producto Gira, para asegurar su compatibilidad con la nueva arquitectura modular de Finkargo 2.0",
+    "testCases": [
+      {
+        "text": "Scenario 1: s centrados en validaciones de campos con Partición de Equivalencia y Análisis de Valores Límite",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 2: Outline:",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 3: 1 - Validación de campos de entrada con valores válidos e inválidos\n    # Técnica ISTQB: Partición de Equivalencia y Análisis de Valores Límite\n    Given que el usuario envía una solicitud al endpoint con los siguientes parámetros:\n      | campo           | valor                |\n      | ID operación    | <idOperacion>        |\n      | monto           | <monto>              |\n      | divisa          | <divisa>             |\n      | fecha           | <fecha>              |\n      | cuenta receptora| <cuentaReceptora>    |\n      | canal           | <canal>              |\n    When se procesa la solicitud de aplicación de recaudo y/o desembolso\n    Then el sistema debe responder con el código <codigoRespuesta>\n    And el mensaje debe ser \"<mensajeRespuesta>\"\n\n    Examples:\n      | idOperacion | monto    | divisa | fecha       | cuentaReceptora | canal       | codigoRespuesta | mensajeRespuesta                       |\n      # ID Operación: válido (UUID), inválido (vacío, formato erróneo)\n      | 123e4567-e89b-12d3-a456-426614174000 | 1000.00 | MXN    | 2024-06-15 | 1234567890     | manual      | 200             | Transacción aplicada con éxito        |\n      | \"\"                              | 1000.00 | MXN    | 2024-06-15 | 1234567890     | manual      | 400             | ID operación inválido                  |\n      | invalid-id                     | 1000.00 | MXN    | 2024-06-15 | 1234567890     | manual      | 400             | ID operación inválido                  |\n      # Monto: válido (>0), límite inferior (0.01), límite superior (1000000), inválido (0, negativo, texto)\n      | 123e4567-e89b-12d3-a456-426614174001 | 0.01    | MXN    | 2024-06-15 | 1234567890     | pago en línea | 200             | Transacción aplicada con éxito        |\n      | 123e4567-e89b-12d3-a456-426614174002 | 0       | MXN    | 2024-06-15 | 1234567890     | manual      | 400             | Monto inválido                        |\n      | 123e4567-e89b-12d3-a456-426614174003 | -10.00  | MXN    | 2024-06-15 | 1234567890     | manual      | 400             | Monto inválido                        |\n      | 123e4567-e89b-12d3-a456-426614174004 | 1000000 | MXN    | 2024-06-15 | 1234567890     | manual      | 200             | Transacción aplicada con éxito        |\n      | 123e4567-e89b-12d3-a456-426614174005 | texto   | MXN    | 2024-06-15 | 1234567890     | manual      | 400             | Monto inválido                        |\n      # Divisa: válida (MXN, USD), inválida (EUR, vacía, caracteres inválidos)\n      | 123e4567-e89b-12d3-a456-426614174006 | 100.00  | MXN    | 2024-06-15 | 1234567890     | manual      | 200             | Transacción aplicada con éxito        |\n      | 123e4567-e89b-12d3-a456-426614174007 | 100.00  | USD    | 2024-06-15 | 1234567890     | pago en línea | 200             | Transacción aplicada con éxito        |\n      | 123e4567-e89b-12d3-a456-426614174008 | 100.00  | EUR    | 2024-06-15 | 1234567890     | manual      | 400             | Divisa no soportada                   |\n      | 123e4567-e89b-12d3-a456-426614174009 | 100.00  | \"\"     | 2024-06-15 | 1234567890     | manual      | 400             | Divisa no soportada                   |\n      | 123e4567-e89b-12d3-a456-426614174010 | 100.00  | MX$    | 2024-06-15 | 1234567890     | manual      | 400             | Divisa no soportada                   |\n      # Fecha: válida (fecha actual y pasada), inválida (futura, formato erróneo)\n      | 123e4567-e89b-12d3-a456-426614174011 | 100.00  | MXN    | 2024-06-15 | 1234567890     | manual      | 200             | Transacción aplicada con éxito        |\n      | 123e4567-e89b-12d3-a456-426614174012 | 100.00  | MXN    | 2025-01-01 | 1234567890     | manual      | 400             | Fecha inválida                        |\n      | 123e4567-e89b-12d3-a456-426614174013 | 100.00  | MXN    | 15-06-2024 | 1234567890     | manual      | 400             | Fecha inválida                        |\n      # Cuenta receptora: válida (números), inválida (vacía, caracteres especiales)\n      | 123e4567-e89b-12d3-a456-426614174014 | 100.00  | MXN    | 2024-06-15 | 1234567890     | manual      | 200             | Transacción aplicada con éxito        |\n      | 123e4567-e89b-12d3-a456-426614174015 | 100.00  | MXN    | 2024-06-15 | \"\"             | manual      | 400             | Cuenta receptora inválida             |\n      | 123e4567-e89b-12d3-a456-426614174016 | 100.00  | MXN    | 2024-06-15 | abc!@#         | manual      | 400             | Cuenta receptora inválida             |\n      # Canal: válido (manual, pago en línea), inválido (otros valores, vacío)\n      | 123e4567-e89b-12d3-a456-426614174017 | 100.00  | MXN    | 2024-06-15 | 1234567890     | manual      | 200             | Transacción aplicada con éxito        |\n      | 123e4567-e89b-12d3-a456-426614174018 | 100.00  | MXN    | 2024-06-15 | 1234567890     | pago en línea | 200             | Transacción aplicada con éxito        |\n      | 123e4567-e89b-12d3-a456-426614174019 | 100.00  | MXN    | 2024-06-15 | 1234567890     | telefono    | 400             | Canal inválido                       |\n      | 123e4567-e89b-12d3-a456-426614174020 | 100.00  | MXN    | 2024-06-15 | 1234567890     | \"\"          | 400             | Canal inválido                       |\n\n  # E",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 4: s basados en tabla de decisión para reglas de negocio que involucran combinación de condiciones\n\n  # Condiciones relevantes:\n  # - Operación existe (sí/no)\n  # - Monto válido (sí/no)\n  # - Divisa soportada (sí/no)\n  # - Transacción duplicada (sí/no)\n  #\n  # Acciones esperadas:\n  # - Aplicar transacción con éxito\n  # - Rechazar con error específico",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 5: Outline:",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 6: 2 - Aplicación de reglas de negocio con múltiples condiciones\n    # Técnica ISTQB: Tabla de Decisión\n    Given que la operación con ID \"<idOperacion>\" existe: <operacionExiste>\n    And que el monto es válido: <montoValido>\n    And que la divisa es soportada: <divisaSoportada>\n    And que la transacción es duplicada: <transaccionDuplicada>\n    When se envía la solicitud de aplicación de recaudo/desembolso\n    Then el resultado debe ser \"<resultadoEsperado>\"\n    And el código de respuesta HTTP debe ser <codigoRespuesta>\n\n    Examples:\n      | idOperacion                           | operacionExiste | montoValido | divisaSoportada | transaccionDuplicada | resultadoEsperado                | codigoRespuesta |\n      | 123e4567-e89b-12d3-a456-426614174000 | true            | true        | true            | false                | Transacción aplicada con éxito   | 200             |\n      | 123e4567-e89b-12d3-a456-426614174001 | false           | true        | true            | false                | Operación no encontrada          | 404             |\n      | 123e4567-e89b-12d3-a456-426614174002 | true            | false       | true            | false                | Monto inválido                  | 400             |\n      | 123e4567-e89b-12d3-a456-426614174003 | true            | true        | false           | false                | Divisa no soportada             | 400             |\n      | 123e4567-e89b-12d3-a456-426614174004 | true            | true        | true            | true                 | Transacción duplicada detectada | 409             |\n\n  # E",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 7: s para pruebas de transición de estado de la operación financiera\n\n  # Estados considerados (implícitos): Pendiente, Aplicado, Rechazado\n  # Transiciones válidas: Pendiente -> Aplicado, Pendiente -> Rechazado\n  # Transiciones inválidas: Aplicado -> Pendiente, Rechazado -> Aplicado, etc.",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 8: 3 - Transición válida de estado Pendiente a Aplicado\n    # Técnica ISTQB: Pruebas de Transición de Estado\n    Given que la operación con ID \"123e4567-e89b-12d3-a456-426614174100\" está en estado \"Pendiente\"\n    When se aplica correctamente la transacción de recaudo/desembolso\n    Then el estado de la operación debe cambiar a \"Aplicado\"\n    And debe registrarse la transacción en auditoría sin duplicados",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 9: 4 - Transición válida de estado Pendiente a Rechazado por monto inválido\n    # Técnica ISTQB: Pruebas de Transición de Estado\n    Given que la operación con ID \"123e4567-e89b-12d3-a456-426614174101\" está en estado \"Pendiente\"\n    When se intenta aplicar una transacción con monto inválido\n    Then el estado de la operación debe cambiar a \"Rechazado\"\n    And debe registrarse el motivo del rechazo en auditoría",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 10: 5 - Transición inválida de estado Aplicado a Pendiente\n    # Técnica ISTQB: Pruebas de Transición de Estado\n    Given que la operación con ID \"123e4567-e89b-12d3-a456-426614174102\" está en estado \"Aplicado\"\n    When se intenta revertir la transacción para volver a estado \"Pendiente\"\n    Then el sistema debe rechazar la operación\n    And el estado debe permanecer como \"Aplicado\"\n    And debe registrarse un evento de error en auditoría",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 11: 6 - Transición inválida de estado Rechazado a Aplicado\n    # Técnica ISTQB: Pruebas de Transición de Estado\n    Given que la operación con ID \"123e4567-e89b-12d3-a456-426614174103\" está en estado \"Rechazado\"\n    When se intenta aplicar la transacción nuevamente\n    Then el sistema debe rechazar la operación\n    And el estado debe permanecer como \"Rechazado\"\n    And debe registrarse un evento de error en auditoría\n\n  # E",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 12: s para flujos alternativos y casos excepcionales",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 13: 7 - Error de sistema al intentar aplicar transacción\n    # Técnica ISTQB: Caso excepcional\n    Given que el microservicio está temporalmente fuera de servicio\n    When se envía una solicitud válida de aplicación de recaudo/desembolso\n    Then el sistema debe responder con código 503\n    And el mensaje debe indicar \"Servicio temporalmente no disponible\"\n    And no debe registrarse ninguna transacción en auditoría",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 14: 8 - Timeout en procesamiento de la solicitud\n    # Técnica ISTQB: Caso excepcional\n    Given que el procesamiento de la solicitud excede el tiempo límite configurado\n    When se envía una solicitud válida de aplicación de recaudo/desembolso\n    Then el sistema debe responder con código 504\n    And el mensaje debe indicar \"Tiempo de espera agotado\"\n    And la transacción no debe aplicarse ni registrarse",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 15: 9 - Duplicidad de transacción detectada en migración\n    # Técnica ISTQB: Caso alternativo basado en validación de duplicidad\n    Given que la transacción con ID \"123e4567-e89b-12d3-a456-426614174000\" ya fue procesada en el sistema legado\n    When se intenta aplicar la misma transacción en el nuevo microservicio\n    Then el sistema debe rechazar la solicitud con código 409\n    And el mensaje debe ser \"Transacción duplicada detectada\"\n    And no debe registrarse una nueva entrada en auditoría",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 16: 10 - Verificación de exposición del endpoint solo a través del nuevo gateway\n    # Técnica ISTQB: Caso alternativo / seguridad\n    Given que un cliente intenta acceder al endpoint directamente sin pasar por el nuevo gateway\n    When se realiza la solicitud de aplicación de recaudo/desembolso\n    Then el sistema debe rechazar la solicitud con código 403\n    And el mensaje debe indicar \"Acceso no autorizado\"",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 17: 11 - Documentación técnica accesible y actualizada en Swagger\n    # Técnica ISTQB: Caso alternativo / verificación documental\n    Given que un usuario accede a la documentación del endpoint en Swagger\n    When consulta los detalles del endpoint de aplicación de recaudo y desembolso\n    Then debe visualizar los parámetros: ID operación, monto, divisa, fecha, cuenta receptora, canal\n    And debe visualizar los posibles códigos de respuesta y mensajes asociados\n    And la documentación debe reflejar la arquitectura modular 2.0",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 18: 12 - Pruebas unitarias cubren e",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 19: s críticos\n    # Técnica ISTQB: Caso alternativo / verificación de cobertura de pruebas\n    Given que el equipo de desarrollo ejecuta las pruebas unitarias del microservicio\n    When se evalúan los resultados de las pruebas\n    Then deben cubrir los e",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 20: s: éxito, operación no encontrada, monto inválido, divisa no soportada\n    And todas las pruebas deben pasar satisfactoriamente\n\n# Fin de la Feature para HU MKT-2358",
+        "status": "Pendiente",
+        "evidence": ""
+      }
+    ]
+  },
+  {
+    "sprintName": "Sprint Inno [2025] W24/W26",
+    "storyKey": "MKT-2365",
+    "storySummary": "Como desarollador, requiero que el endpoint de save_quote permita añadir varios correos de copia.",
+    "testCases": [
+      {
+        "text": "Scenario 1: Outline 1: Validar envío de cotización con múltiples correos de copia válidos\n    Given el endpoint save_quote está disponible\n    When se envía una solicitud con los correos de copia \"<copias>\"\n    Then el sistema acepta la solicitud y envía el email de cotización a las copias indicadas\n    Examples:\n      | copias                                 |\n      | \"correo1@dominio.com\"                  | # Un solo correo válido\n      | \"correo1@dominio.com,correo2@dominio.com\" | # Dos correos válidos\n      | \"correo1@dominio.com,correo2@dominio.com,correo3@dominio.com\" | # Tres correos válidos\n      | \"correo1@dominio.com, correo2@dominio.com\" | # Correos con espacio después de la coma\n\n  # Técnica ISTQB: Partición de Equivalencia y Análisis de Valores Límite",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 2: Outline 2: Validar errores al enviar correos de copia inválidos o malformados\n    Given el endpoint save_quote está disponible\n    When se envía una solicitud con los correos de copia \"<copias>\"\n    Then el sistema rechaza la solicitud con un error de validación indicando correos inválidos\n    Examples:\n      | copias                                   |\n      | \"\"                                       | # Campo vacío\n      | \"correo-invalido\"                        | # Correo sin formato válido\n      | \"correo@dominio,otrocorreo@dominio.com\" | # Correo inválido y uno válido\n      | \"correo@dominio.com, ,correo2@dominio.com\" | # Correo vacío entre comas\n      | \"correo@dominio.com,correo2@dominio\"     | # Correo sin dominio válido\n\n  # Técnica ISTQB: Partición de Equivalencia y Análisis de Valores Límite",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 3: Validar límite máximo de correos de copia permitidos\n    Given el endpoint save_quote está disponible\n    When se envía una solicitud con 50 correos de copia válidos\n    Then el sistema acepta la solicitud y envía el email a las 50 copias",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 4: Validar error al exceder límite máximo de correos de copia permitidos\n    Given el endpoint save_quote está disponible\n    When se envía una solicitud con 51 correos de copia válidos\n    Then el sistema rechaza la solicitud indicando que se excedió el límite máximo de correos permitidos\n\n  # Técnica ISTQB: Pruebas de casos excepcionales (fallos del sistema)",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 5: Fallo del sistema al enviar cotización con múltiples correos de copia\n    Given el endpoint save_quote está disponible\n    And el sistema de envío de correo está caído\n    When se envía una solicitud con varios correos de copia válidos\n    Then el sistema devuelve un error de servicio indicando fallo en el envío de correos\n\n  # Técnica ISTQB: Pruebas de casos excepcionales (timeout)",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 6: Timeout al procesar solicitud con múltiples correos de copia\n    Given el endpoint save_quote está disponible\n    And la respuesta del sistema demora más de 10 segundos\n    When se envía una solicitud con varios correos de copia válidos\n    Then el sistema devuelve un error de timeout indicando que la solicitud no pudo ser procesada a tiempo\n\n  # Técnica ISTQB: Tabla de Decisión (validación combinada de correos y límite)\n  # Tabla:\n  # | Correos válidos | Correos inválidos | Cantidad de correos | Resultado esperado                        |\n  # | Sí              | No                | <= 50               | Acepta y envía email                     |\n  # | Sí              | No                | > 50                | Rechaza por límite excedido              |\n  # | Sí              | Sí                | cualquier           | Rechaza por correos inválidos            |\n  # | No              | Sí                | cualquier           | Rechaza por correos inválidos            |",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 7: Outline 7: Validar combinaciones de correos válidos e inválidos y cantidad\n    Given el endpoint save_quote está disponible\n    When se envía una solicitud con los correos de copia \"<copias>\"\n    Then el sistema responde con \"<resultado>\"\n    Examples:\n      | copias                                               | resultado                                         |\n      | \"correo1@dominio.com,correo2@dominio.com\"            | \"Acepta y envía email\"                            |\n      | \"correo1@dominio.com,correo2@dominio.com,correo3@dominio.com,...,correo51@dominio.com\" | \"Rechaza por límite excedido\"   |\n      | \"correo1@dominio.com,correo-invalido@dominio.com\"    | \"Rechaza por correos inválidos\"                   |\n      | \"correo-invalido,correo-mal@dominio\"                  | \"Rechaza por correos inválidos\"                   |\n\n  # Nota: En el ejemplo anterior, \"correo3@dominio.com,...,correo51@dominio.com\" indica una lista con 51 correos válidos.\n\n  # Técnica ISTQB: Pruebas de flujo alternativo - formato incorrecto en el campo copia",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 8: Envío con formato incorrecto en el campo de correos de copia (uso de punto y coma en lugar de coma)\n    Given el endpoint save_quote está disponible\n    When se envía una solicitud con correos separados por punto y coma \"correo1@dominio.com;correo2@dominio.com\"\n    Then el sistema rechaza la solicitud indicando formato incorrecto en el campo de correos de copia\n\n  # Técnica ISTQB: Pruebas de flujo alternativo - campo copia omitido",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 9: Envío sin campo de correos de copia\n    Given el endpoint save_quote está disponible\n    When se envía una solicitud sin incluir el campo de correos de copia\n    Then el sistema acepta la solicitud y envía el email solo al destinatario principal\n\n# Fin de Feature MKT-2365",
+        "status": "Pendiente",
+        "evidence": ""
+      }
+    ]
+  },
+  {
+    "sprintName": "Back-Bone [2025] W30/W33",
+    "storyKey": "FDM-5560",
+    "storySummary": "[CO][MX] BackEnd - Ajustar calculo del total de clientes con garantias",
+    "testCases": [
+      {
+        "text": "Scenario 1: Outline 1: [Partición de Equivalencia y Valores Límite] Calcular total clientes con garantías con diferentes combinaciones de entrada válidas e inválidas\n    Given el número total de clientes es <total_clientes>\n    And el número de clientes con garantías es <clientes_con_garantias>\n    And el monto de garantía promedio por cliente es <monto_garantia>\n    And la fecha de corte para considerar garantías es \"<fecha_corte>\"\n    When se ejecuta el cálculo del total de clientes con garantías\n    Then el sistema debe <resultado_esperado>\n\n    Examples:\n      | total_clientes | clientes_con_garantias | monto_garantia | fecha_corte  | resultado_esperado                              |\n      | 100            | 50                    | 1000.00       | 2024-06-01   | calcular y devolver total correcto              |\n      | 0              | 0                     | 0.00          | 2024-06-01   | calcular y devolver total 0                      |\n      | 1              | 1                     | 0.01          | 2024-06-01   | calcular y devolver total correcto (límite bajo)|\n      | 1000           | 1000                  | 999999.99     | 2024-06-01   | calcular y devolver total correcto (límite alto)|\n      | -1             | 10                    | 100.00        | 2024-06-01   | mostrar error por número total de clientes inválido|\n      | 10             | -5                    | 100.00        | 2024-06-01   | mostrar error por número clientes con garantías inválido|\n      | 10             | 15                    | 100.00        | 2024-06-01   | mostrar error porque clientes con garantías > total clientes|\n      | 10             | 5                     | -100.00       | 2024-06-01   | mostrar error por monto de garantía inválido    |\n      | 10             | 5                     | 100.00        | 2024-13-01   | mostrar error por fecha de corte inválida        |\n      | 10             | 5                     | 100.00        | 2023-12-31   | calcular y devolver total considerando fecha límite|",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 2: [Partición de Equivalencia] Manejo de campos nulos o vacíos\n    Given el número total de clientes es null\n    And el número de clientes con garantías es null\n    And el monto de garantía promedio por cliente es null\n    And la fecha de corte para considerar garantías es \"\"\n    When se ejecuta el cálculo del total de clientes con garantías\n    Then el sistema debe mostrar error indicando campos obligatorios faltantes",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 3: [Pruebas de Excepciones] Fallo en el sistema durante el cálculo\n    Given el sistema está operativo\n    When se ejecuta el cálculo del total de clientes con garantías\n    And ocurre un fallo inesperado en el backend\n    Then el sistema debe mostrar un mensaje de error genérico y registrar el fallo para soporte",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 4: [Pruebas de Excepciones] Timeout en la consulta de datos para cálculo\n    Given el sistema está operativo\n    When se ejecuta el cálculo del total de clientes con garantías\n    And la consulta de datos excede el tiempo máximo permitido\n    Then el sistema debe mostrar un mensaje de timeout y sugerir reintentar la operación\n\n# Nota: Sin más detalles específicos sobre reglas de negocio o estados, no se aplicaron tablas de decisión ni pruebas de transición de estado. Si se proveen reglas adicionales, se podrán generar casos más específicos.",
+        "status": "Pendiente",
+        "evidence": ""
+      }
+    ]
+  },
+  {
+    "sprintName": "Back-Bone [2025] W30/W33",
+    "storyKey": "FDM-5609",
+    "storySummary": "[CO][MX] FrontEnd - Actualizar Proformas y Facturas de Garantias Financiadas después de ser fraccionadas",
+    "testCases": [
+      {
+        "text": "Scenario 1: [Partición de Equivalencia y Análisis de Valores Límite] Actualizar proforma con ID válido y montos dentro de límites permitidos\n    Given que la proforma con ID \"PROF12345\" existe y está en estado \"Fraccionada\"\n    When el usuario actualiza el monto total a \"10000.00\" y la fecha de actualización a \"2024-06-15\"\n    Then la actualización se realiza correctamente y el sistema muestra el mensaje \"Proforma actualizada exitosamente\"",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 2: [Partición de Equivalencia y Análisis de Valores Límite] Intentar actualizar proforma con ID inválido (vacío)\n    Given que el usuario intenta actualizar una proforma con ID \"\"\n    When el usuario ingresa un monto total \"5000.00\"\n    Then el sistema muestra un error \"El ID de la proforma es obligatorio\"",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 3: [Partición de Equivalencia y Análisis de Valores Límite] Actualizar factura con monto fuera de rango (negativo)\n    Given que la factura con ID \"FACT67890\" existe y está en estado \"Fraccionada\"\n    When el usuario intenta actualizar el monto total a \"-100.00\"\n    Then el sistema muestra un error \"El monto debe ser mayor o igual a 0\"",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 4: [Partición de Equivalencia y Análisis de Valores Límite] Actualizar factura con monto en límite máximo permitido (ejemplo: 1,000,000.00)\n    Given que la factura con ID \"FACT67890\" existe y está en estado \"Fraccionada\"\n    When el usuario actualiza el monto total a \"1000000.00\"\n    Then la actualización se realiza correctamente y el sistema muestra el mensaje \"Factura actualizada exitosamente\"",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 5: [Tabla de Decisión] Validar actualización según estado de la garantía financiada\n    Given que la garantía financiada está en estado \"<EstadoGarantía>\"\n    When el usuario intenta actualizar la proforma o factura con ID \"<IDDocumento>\"\n    Then el resultado esperado es \"<Resultado>\"\n\n    Examples:\n      | EstadoGarantía | IDDocumento | Resultado                                      |\n      | Fraccionada   | PROF12345   | actualización exitosa                          |\n      | Pendiente     | PROF12345   | error \"No se puede actualizar en estado Pendiente\" |\n      | Cancelada     | FACT67890   | error \"No se puede actualizar factura cancelada\"     |",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 6: [Transición de Estado] Intentar actualizar proforma para transición válida de estado \"Fraccionada\" a \"Actualizada\"\n    Given que la proforma con ID \"PROF12345\" está en estado \"Fraccionada\"\n    When el usuario actualiza la proforma y confirma el cambio de estado a \"Actualizada\"\n    Then el estado de la proforma cambia a \"Actualizada\" y se muestra el mensaje \"Estado actualizado correctamente\"",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 7: [Transición de Estado] Intentar actualizar factura con transición inválida de estado \"Cancelada\" a \"Actualizada\"\n    Given que la factura con ID \"FACT67890\" está en estado \"Cancelada\"\n    When el usuario intenta actualizar la factura y cambiar el estado a \"Actualizada\"\n    Then el sistema muestra un error \"No es posible actualizar factura en estado Cancelada\" y el estado permanece \"Cancelada\"",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 8: [Flujo Alternativo - Error de Usuario] Ingreso de fecha de actualización en formato inválido\n    Given que la proforma con ID \"PROF12345\" existe y está en estado \"Fraccionada\"\n    When el usuario ingresa la fecha de actualización \"15-06-2024\"\n    Then el sistema muestra un error \"Formato de fecha inválido, use AAAA-MM-DD\"",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 9: [Caso Excepcional - Fallo del Sistema] Error al actualizar debido a timeout del servidor\n    Given que la proforma con ID \"PROF12345\" está lista para actualizar\n    When el usuario envía la actualización y el servidor no responde en el tiempo esperado\n    Then el sistema muestra un mensaje \"Error de conexión. Por favor intente más tarde.\"",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 10: [Caso Excepcional - Fallo del Sistema] Error inesperado durante la actualización\n    Given que la factura con ID \"FACT67890\" está en estado \"Fraccionada\"\n    When el usuario intenta actualizar la factura y ocurre un error inesperado en el sistema\n    Then el sistema muestra un mensaje \"Error interno. Contacte al soporte técnico.\"",
+        "status": "Pendiente",
+        "evidence": ""
+      }
+    ]
+  },
+  {
+    "sprintName": "Sprint Inno [2025] W22/W24",
+    "storyKey": "MKT-2360",
+    "storySummary": "Como TL, quiero realizar un refactor técnico y funcional de los flujos de Home, Cotizador de Seguros (Protege) y la compra de reportes de Analiza, para mejorar la eficiencia, mantenibilidad del código, y asegurar una mejor UX",
+    "testCases": [
+      {
+        "text": "Scenario 1: Validación de campos del formulario en Cotizador Protege con Partición de Equivalencia y Valores Límite",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 2: Outline: Validación robusta de campos en formulario de Cotización Protege - Partición de Equivalencia y Análisis de Valores Límite\n    Given el usuario accede al formulario del Cotizador Protege\n    When el usuario ingresa el campo \"<Campo>\" con el valor \"<Valor>\"\n    And el usuario envía el formulario\n    Then el sistema valida el campo \"<Campo>\"\n    And el sistema muestra el mensaje de error según corresponda\n    Examples:\n      | Campo          | Valor               | Resultado esperado                       |\n      | Edad           | 18                  | Formato válido, sin error                |\n      | Edad           | 17                  | Error: Edad mínima permitida es 18      |\n      | Edad           | 100                 | Formato válido, sin error (límite alto) |\n      | Edad           | 101                 | Error: Edad máxima permitida es 100     |\n      | Edad           | texto               | Error: Formato inválido                  |\n      | Monto Asegurado| 50000               | Formato válido, sin error                |\n      | Monto Asegurado| 0                   | Error: Monto mínimo es 1                  |\n      | Monto Asegurado| -100                | Error: Valor no puede ser negativo       |\n      | Monto Asegurado| 1000000             | Formato válido, sin error (límite alto) |\n      | Monto Asegurado| 1000001             | Error: Monto máximo es 1,000,000         |\n      | Email          | usuario@ejemplo.com | Formato válido, sin error                |\n      | Email          | usuario@ejemplo     | Error: Formato de email inválido         |\n      | Email          | \"\"                  | Error: Campo obligatorio                 |\n\n  # E",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 3: Validación de reglas de negocio en compra de reportes Analiza mediante Tabla de Decisión",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 4: Outline: Validación de condiciones para compra de reportes Analiza - Tabla de Decisión\n    Given el usuario está en la pantalla de compra de reportes Analiza\n    When el usuario selecciona \"<TipoReporte>\"\n    And el usuario tiene saldo suficiente: <SaldoSuficiente>\n    And el usuario acepta los términos: <AceptaTerminos>\n    And el usuario confirma la compra\n    Then el sistema procesa la compra según las reglas\n    And el resultado es \"<Resultado>\"\n\n    Examples:\n      | TipoReporte   | SaldoSuficiente | AceptaTerminos | Resultado                  |\n      | Básico        | true            | true           | Compra exitosa             |\n      | Básico        | false           | true           | Error: Saldo insuficiente  |\n      | Básico        | true            | false          | Error: Debe aceptar términos|\n      | Avanzado      | true            | true           | Compra exitosa             |\n      | Avanzado      | false           | true           | Error: Saldo insuficiente  |\n      | Avanzado      | true            | false          | Error: Debe aceptar términos|\n      | Premium       | true            | true           | Compra exitosa             |\n      | Premium       | false           | true           | Error: Saldo insuficiente  |\n      | Premium       | true            | false          | Error: Debe aceptar términos|\n\n  # E",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 5: Pruebas de transición de estado en flujo end-to-end de Cotizador Protege",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 6: Transiciones válidas de estado en flujo de cotización y compra de Protege - Transición de Estado\n    Given un nuevo pedido de seguro en estado \"pendiente\"\n    When el usuario completa la cotización correctamente\n    Then el estado cambia a \"cotizado\"\n    When el usuario confirma la compra\n    Then el estado cambia a \"pagado\"\n    When el sistema valida la compra\n    Then el estado cambia a \"aprobado\"",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 7: Transiciones inválidas de estado en flujo de cotización y compra de Protege - Transición de Estado\n    Given un pedido en estado \"pendiente\"\n    When el usuario intenta confirmar la compra sin cotizar\n    Then el sistema muestra error \"No se puede comprar sin cotización previa\"\n    And el estado permanece en \"pendiente\"\n    Given un pedido en estado \"pagado\"\n    When el usuario intenta modificar la cotización\n    Then el sistema muestra error \"No se puede modificar cotización después de pago\"\n    And el estado permanece en \"pagado\"\n\n  # E",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 8: Validación de mensajes de error claros y robustos en formularios - Partición de Equivalencia",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 9: Mensajes de error claros en formularios de Cotizador y Compra\n    Given el usuario ingresa datos inválidos en cualquier formulario\n    When el formulario es enviado\n    Then el sistema muestra mensajes de error específicos y claros para cada campo inválido\n    And los mensajes son consistentes en todas las pantallas relacionadas\n\n  # E",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 10: Validación de rendimiento de carga y navegación mejora al menos 10% - Caso excepcional",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 11: Medición de rendimiento antes y después del refactor - Caso excepcional\n    Given se tiene la medición de rendimiento previa al refactor con Lighthouse\n    When se ejecuta la medición de rendimiento en ambiente de testing con el código refactorizado\n    Then la mejora en carga y navegación es al menos un 10%\n    And los resultados se documentan adecuadamente\n\n  # E",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 12: Validación de que los endpoints actuales no se rompen - Caso excepcional",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 13: Verificación de integridad de endpoints existentes\n    Given los endpoints actuales están disponibles\n    When se realizan llamadas automatizadas de integración a cada endpoint\n    Then todas las respuestas cumplen con el contrato esperado\n    And no se presentan errores ni regresiones funcionales\n\n  # E",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 14: Manejo de fallos del sistema y timeouts en flujos principales - Caso excepcional",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 15: Manejo de timeout y errores en llamadas a APIs durante el flujo de Home y Cotizador\n    Given el usuario navega por la pantalla Home y accede al Cotizador Protege\n    When ocurre un timeout en la llamada a la API de cálculo de cotización\n    Then el sistema muestra un mensaje de error amigable \"No se pudo calcular la cotización. Intente nuevamente.\"\n    And el usuario puede reintentar la operación sin perder datos ingresados\n    When ocurre un fallo en la compra de reporte Analiza por error de red\n    Then el sistema muestra mensaje \"Error al procesar la compra. Verifique su conexión e intente más tarde.\"\n    And no se realiza el cobro ni se genera reporte\n\n  # E",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 16: Validación de eliminación de código obsoleto y unificación de llamadas a APIs en Home",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 17: Verificación de optimización en pantalla Home\n    Given el usuario accede a la pantalla Home\n    When se monitorea la cantidad de llamadas a APIs\n    Then se verifica que las llamadas están unificadas y no duplicadas\n    And no hay código obsoleto ejecutándose (verificado por logs y análisis de código)\n    And la pantalla carga correctamente con UX consistente\n\n# Fin de Feature",
+        "status": "Pendiente",
+        "evidence": ""
+      }
+    ]
   }
 ]
