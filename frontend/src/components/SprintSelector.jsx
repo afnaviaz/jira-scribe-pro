@@ -17,37 +17,39 @@ const SprintSelector = () => {
         setStoriesWithCases // Añadido para desestructurar
     } = useContext(AppContext);
 
-    // Cargar sprints al seleccionar proyecto
+    // 1. Cargar sprints al seleccionar proyecto y seleccionar el sprint más reciente por defecto
     useEffect(() => {
-        const fetchSprints = async () => {
+        const fetchSprintsAndSetDefault = async () => {
             if (selectedProject) {
                 try {
                     const response = await getSprints(selectedProject.key || selectedProject);
-                    setSprints(response.data);
+                    const fetchedSprints = response.data;
+                    setSprints(fetchedSprints);
+
+                    // Seleccionar por defecto el sprint más reciente
+                    if (fetchedSprints && fetchedSprints.length > 0) {
+                        const sprintsOrdenados = [...fetchedSprints].sort((a, b) => b.id - a.id);
+                        const ultimoSprint = sprintsOrdenados[0];
+                        // Solo establecer si no hay un sprint seleccionado o si el seleccionado no está entre los nuevos sprints
+                        if (!selectedSprints.length || !fetchedSprints.some(s => String(s.id) === selectedSprints[0])) {
+                            setSelectedSprints([ultimoSprint.id.toString()]);
+                        }
+                    } else {
+                        setSelectedSprints([]); // Limpiar selección si no hay sprints
+                    }
                 } catch (err) {
                     setError('Error al cargar los sprints del proyecto seleccionado.');
                 }
             } else {
                 setSprints([]);
+                setSelectedSprints([]); // Limpiar selección si no hay proyecto
             }
-            setSelectedSprints([]);
-            setStories([]);
+            setStories([]); // Siempre limpiar historias al cambiar de proyecto/sprint
         };
-        fetchSprints();
-    }, [selectedProject, setSprints, setError, setSelectedSprints, setStories]);
+        fetchSprintsAndSetDefault();
+    }, [selectedProject, setSprints, setError, setSelectedSprints, setStories]); // Dependencias: selectedProject, setSprints, setError, setSelectedSprints, setStories
 
-    // Seleccionar por defecto el sprint más reciente cuando se cargan los sprints
-    useEffect(() => {
-        if (sprints && sprints.length > 0) {
-            const sprintsOrdenados = [...sprints].sort((a, b) => b.id - a.id);
-            const ultimoSprint = sprintsOrdenados[0];
-            if (!selectedSprints.length) {
-                setSelectedSprints([ultimoSprint.id.toString()]);
-            }
-        }
-    }, [sprints, selectedSprints, setSelectedSprints]);
-
-    // Cargar historias de usuario del sprint seleccionado
+    // 2. Cargar historias de usuario del sprint seleccionado
     useEffect(() => {
         const fetchStories = async () => {
             if (selectedSprints.length > 0) {
