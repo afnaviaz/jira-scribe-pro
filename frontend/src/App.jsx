@@ -12,6 +12,7 @@ import './index.css';
 const MainApp = () => {
     const { isResultsModalOpen, setIsResultsModalOpen } = useContext(AppContext);
     const [selectedMenu, setSelectedMenu] = useState('generator');
+    const [pantalla, setPantalla] = useState('principal'); // 'principal' o 'guardados'
     
     return (
         <div style={{ display: 'flex', minHeight: '100vh' }}>

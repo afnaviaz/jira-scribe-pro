@@ -5,6 +5,7 @@ import jiraRoutes from './api/jiraRoutes.js';
 import openaiRoutes from './api/openaiRoutes.js';
 import geminiRoutes from './api/geminiRoutes.js';
 import confluenceRoutes from './routes/confluence.js';
+import testCaseRoutes from './api/testCaseRoutes.js';
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.use('/api/jira', jiraRoutes);
 app.use('/api/openai', openaiRoutes);
 app.use('/api/gemini', geminiRoutes);
 app.use('/api/confluence', confluenceRoutes);
+app.use('/api/test-cases', testCaseRoutes);
 
 app.get('/', (req, res) => {
   res.send('JiraScribe Pro Backend está corriendo 🚀'); 
