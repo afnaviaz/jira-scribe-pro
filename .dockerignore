@@ -1,0 +1,19 @@
+# Git
+.git
+.gitignore
+
+# Docker
+Dockerfile
+.dockerignore
+
+# Dependencias (se instalarán dentro del contenedor)
+node_modules
+frontend/node_modules
+backend/node_modules
+
+# Logs y archivos temporales
+*.log
+
+# Archivos del sistema operativo
+.DS_Store
+
