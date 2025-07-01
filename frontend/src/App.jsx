@@ -8,62 +8,39 @@ import ResultadosDisplay from './components/ResultadosDisplay';
 import Sidebar from './components/sidebar';
 import Modal from './components/Modal';
 import CasosGuardadosScreen from './components/CasosGuardadosScreen';
+import TestPlanScreen from './components/TestPlanScreen';
 import './index.css';
+
+// Placeholder para componentes de pantalla no implementados
+const BacklogScreen = () => (
+    <div className="page-container">
+        <header className="page-header">
+            <h1 className="page-title">Backlog de Pruebas</h1>
+        </header>
+    </div>
+);
+
 const MainApp = () => {
     const { isResultsModalOpen, setIsResultsModalOpen } = useContext(AppContext);
     const [selectedMenu, setSelectedMenu] = useState('generator');
-    const [pantalla, setPantalla] = useState('principal'); // 'principal' o 'guardados'
     
+    const pageTitles = {
+        generator: 'Generador de Casos de Prueba',
+        planPruebas: 'Plan de Pruebas',
+        casosGuardados: 'Casos de Prueba Guardados',
+        backlog: 'Backlog de Pruebas' // Ejemplo
+    };
+
     return (
-        <div style={{ display: 'flex', minHeight: '100vh' }}>
+        <div className="app-layout">
             <Sidebar selected={selectedMenu} onSelect={setSelectedMenu} />
-            <div style={{ flex: 1, background: '#f7f8fa', minHeight: '100vh' }}>
+            <div className="app-content-wrapper">
                 {selectedMenu === 'generator' && (
-                    <div className="container">
-                        <header style={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: 16,
-                            padding: '24px 0 16px 0',
-                            borderBottom: '2px solid #e0e0e0',
-                            marginBottom: 24,
-                            background: '#f7f8fa'
-                        }}>
-                            {/* Icono QA */}
-                            <span style={{
-                                fontSize: 40,
-                                color: '#2835a7',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center'
-                            }}>
-                                
-                            </span>
-                            {/* Logo Finkargo */}
-                            <img
-                                src="/qaia.png"
-                                alt="Finkargo"
-                                style={{ height: 100, marginRight: 10, borderRadius: 10, boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}
-                            />
-                            <div>
-                                <h1 style={{
-                                    margin: 0,
-                                    fontSize: 32,
-                                    fontWeight: 800,
-                                    letterSpacing: 1,
-                                    color: '#1a2257',
-                                    aligntext: 'right'
-                                }}>
-                                    Test Case.
-                                </h1>
-                                <p style={{
-                                    margin: 0,
-                                    fontSize: 16,
-                                    color: '#2835a7',
-                                    fontWeight: 400
-                                }}>
-                                </p>
-                            </div>
+                    <div className="page-container">
+                        <header className="page-header">
+                            <h1 className="page-title">
+                                {pageTitles[selectedMenu] || 'Generador de Casos de Prueba'}
+                            </h1>
                         </header>
                         <main>
                             <div className="selectors">
@@ -83,7 +60,7 @@ const MainApp = () => {
                     <BacklogScreen />
                 )}
                 {selectedMenu === 'planPruebas' && (
-                    <PlanDePruebasScreen />
+                    <TestPlanScreen />
                 )}
                 {selectedMenu === 'casosGuardados' && (
                     <CasosGuardadosScreen />
