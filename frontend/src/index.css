@@ -1,37 +1,89 @@
 /* Estilos para Sidebar */
 .sidebar {
-  width: 220px;
+  width: 250px; /* Un poco más ancho */
   min-height: 100vh;
-  background: #1a2257;
-  color: #fff;
+  background: #111827; /* Un azul muy oscuro, casi negro */
+  color: #e5e7eb; /* Un gris claro para el texto */
   display: flex;
   flex-direction: column;
-  padding-top: 32px;
+  padding: 24px 16px; /* Ajuste de padding */
   box-sizing: border-box;
+  border-right: 1px solid #1f2937; /* Borde sutil */
+}
+
+.sidebar-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 32px;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #1f2937;
+}
+
+.sidebar-logo {
+  height: 80px;
+  width: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+}
+
+.sidebar-title {
+  font-size: 24px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px; /* Espacio entre botones */
 }
 
 .sidebar-button {
+  display: flex;
+  align-items: center;
+  gap: 16px; /* Espacio entre icono y texto */
   background: transparent;
-  color: #fff;
+  color: #d1d5db; /* Texto un poco más tenue */
   border: none;
-  padding: 16px 24px;
+  padding: 12px 16px;
   text-align: left;
-  font-weight: 600;
-  font-size: 18px;
+  font-weight: 500; /* Un poco menos bold */
+  font-size: 16px; /* Un poco más pequeño */
   cursor: pointer;
-  transition: background 0.2s ease-in-out;
+  border-radius: 8px; /* Bordes redondeados */
+  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
+  position: relative;
 }
 
-.sidebar-button:hover {
-  background: #2835a7;
+.sidebar-button:hover:not(:disabled) {
+  background: #1f2937; /* Un fondo sutil al pasar el mouse */
+  color: #ffffff; /* Texto más brillante al pasar el mouse */
 }
 
 .sidebar-button.active {
-  background: #2835a7;
+  background: #374151; /* Fondo más claro para el botón activo */
+  color: #ffffff;
+  font-weight: 600;
+}
+
+/* Indicador visual para el botón activo */
+.sidebar-button.active::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  bottom: 8px;
+  width: 4px;
+  background-color: #4f46e5; /* Un acento de color violeta/azul */
+  border-radius: 0 4px 4px 0;
 }
 
 .sidebar-button:disabled {
-  color: #7a7e9e;
+  color: #4b5563; /* Color más oscuro para deshabilitado */
   cursor: not-allowed;
   background: transparent;
 }
@@ -88,6 +140,10 @@
   font-size: 16px;
   letter-spacing: 1px;
   border-right: 1px solid #e0e0e0;
+}
+
+.sidebar-button span {
+  flex-grow: 1;
 }
 
 .story-tag {
@@ -190,6 +246,40 @@
   flex-grow: 1;
   padding: 2rem;
   overflow-y: auto; /* Para permitir scroll si el contenido es muy largo */
+}
+
+/* === Layout === */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.app-content-wrapper {
+  flex: 1;
+  background: #f7f8fa;
+  min-height: 100vh;
+  overflow-y: auto;
+}
+
+.page-container {
+  padding: 0 48px;
+  max-width: 1400px;
+  margin: 0 auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.page-header {
+  padding: 24px 0;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 24px;
+}
+
+.page-title {
+  margin: 0;
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a2257;
 }
 
 /* Estilos para ActionPanel */
@@ -460,6 +550,40 @@
 .modal-body {
   padding: 1.5rem;
   overflow-y: auto;
+}
+
+/* === TestPlanScreen Styles === */
+.test-plan-container {
+  padding: 24px 48px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.test-plan-container h2 {
+  font-size: 28px;
+  font-weight: 700;
+  color: #1a2257;
+  margin: 0 0 8px 0;
+  padding-bottom: 24px;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 16px;
+}
+
+.test-plan-subtitle {
+  margin: 0 0 24px 0;
+  color: #4a5568;
+}
+
+.test-plan-textarea {
+  width: 100%;
+  min-height: 60vh;
+  resize: vertical;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  padding: 16px;
+  border-radius: 6px;
+  border: 1px solid #cbd5e0;
+  box-sizing: border-box;
 }
 
 /* Spinner simple para el estado de carga en el modal */

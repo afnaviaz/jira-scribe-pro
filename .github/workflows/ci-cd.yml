@@ -1,0 +1,30 @@
+name: CI/CD - Build and Push Docker Image
+
+# Este workflow se ejecuta cada vez que haces un push a la rama "main"
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest # Usamos una máquina virtual de Ubuntu proporcionada por GitHub
+
+    steps:
+      # 1. Clona tu repositorio para tener acceso al código y al Dockerfile
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # 2. Inicia sesión en Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      # 3. Construye la imagen de Docker y la sube a Docker Hub
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/jirascribe-pro:latest
