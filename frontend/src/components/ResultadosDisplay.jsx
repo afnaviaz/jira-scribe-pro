@@ -3,7 +3,7 @@ import { AppContext } from '../context/AppContext';
 import { exportCasesToJira, saveTestCases } from '../services/api';
 
 const ResultadosDisplay = () => {
-  const { generatedContent, isLoading, error, setStoriesWithCases, sprints, selectedSprints } = useContext(AppContext);
+  const { generatedContent, isLoading, error, setStoriesWithCases, sprints, selectedSprints, selectedProject } = useContext(AppContext);
   // Estado para el texto editado en cada textarea
   const [editados, setEditados] = useState({});
   // Estado unificado para manejar el estado de las acciones (guardar, exportar)
@@ -38,23 +38,18 @@ const ResultadosDisplay = () => {
     setActionStatus({ storyKey, type: 'saving', message: 'Guardando...' });
 
     try {
-      // Si el texto fue editado, lo usamos; si no, usamos el original.
-      const rawTestCases = editados[storyKey]
-        ? editados[storyKey].split('\n\n').filter(Boolean)
+      // Si el texto fue editado, lo parseamos de nuevo al formato de objeto. Si no, usamos el array original.
+      const testCasesToSave = editados[storyKey]
+        ? editados[storyKey].split('\n\n').filter(Boolean).map(text => ({ text, status: 'Pendiente', evidence: '' }))
         : historia.testCases;
-
-      // Estandarizamos el formato para asegurar que siempre sea un array de objetos.
-      const testCasesToSave = rawTestCases.map(tc => ({
-        text: tc,
-        status: 'Pendiente',
-        evidence: '',
-      }));
 
       const sprintId = selectedSprints.length > 0 ? selectedSprints[0] : null;
       const sprint = sprintId ? sprints.find(s => String(s.id) === sprintId) : null;
       const sprintName = sprint ? sprint.name : 'General';
 
       const payload = {
+        projectKey: selectedProject.key,
+        projectName: selectedProject.name,
         storyKey: storyKey,
         storySummary: historia.storySummary,
         sprintName,
@@ -74,7 +69,7 @@ const ResultadosDisplay = () => {
     const storyKey = historia.storyKey;
     setActionStatus({ storyKey, type: 'exporting', message: 'Exportando...' });
     try {
-      const casesToExport = editados[storyKey] ?? (Array.isArray(historia.testCases) ? historia.testCases.join('\n\n') : '');
+      const casesToExport = editados[storyKey] ?? historia.testCases.map(tc => tc.text).join('\n\n');
       await exportCasesToJira(storyKey, casesToExport);
       setStoriesWithCases(prev => [...new Set([...prev, storyKey])]);
       setActionStatus({ storyKey, type: 'success', message: '¡Exportado!' });
@@ -94,7 +89,7 @@ const ResultadosDisplay = () => {
           <p className="result-story-summary">{historia.storySummary}</p>
           <textarea
             className="result-textarea"
-            value={editados[historia.storyKey] ?? (Array.isArray(historia.testCases) ? historia.testCases.join('\n\n') : '')}
+            value={editados[historia.storyKey] ?? historia.testCases.map(tc => tc.text).join('\n\n')}
             onChange={e => setEditados({ ...editados, [historia.storyKey]: e.target.value })}
           />
           <div className="result-actions">

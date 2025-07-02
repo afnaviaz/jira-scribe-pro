@@ -1,6 +1,7 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import config from '../config/index.js';
 import { extractJiraDescription } from "../utils/descriptionExtractor.js"; // Importa la función centralizada
+import { parseGherkinScenarios } from "../utils/aiResponseParser.js";
 
 const genAI = new GoogleGenerativeAI(config.geminiApiKey);
 
@@ -20,7 +21,6 @@ Estructura la respuesta así:
 - Usa lenguaje claro y preciso en los pasos Given, When, Then.
 
 Aquí están las Historias de Usuario a analizar:
-
 ---
 ${storiesText}
 ---
@@ -28,27 +28,15 @@ ${storiesText}
 
 export async function generateCasesWithGemini(stories) {
   const generationPromises = stories.map(async (story) => {
-    const descText = extractJiraDescription(story.fields.description);
-    const safeDesc = descText && descText.length > 20 ? descText : '[Descripción no disponible como texto plano]';
-    const singleStoryText = `HU: ${story.key}\nResumen: ${story.fields.summary}\nDescripción: ${safeDesc}`;
+    const descText = extractJiraDescription(story.fields.description) || 'Sin descripción';
+    const singleStoryText = `HU ID: ${story.key}\nResumen: ${story.fields.summary}\nDescripción: ${descText}`;
     const prompt = getGeminiPrompt(singleStoryText);
 
     try {
       const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
       const result = await model.generateContent(prompt);
       const text = await result.response.text();
-
-      // Parseo simple de escenarios para una única respuesta
-      const scenariosRaw = text.split(/Scenario\s*(?:\d+\s*:)?:?/gi)
-        .map(s => s.trim())
-        .filter(Boolean);
-
-      let testCases = [];
-      if (scenariosRaw.length > 1 && scenariosRaw[0].toUpperCase().startsWith("FEATURE:")) {
-        testCases = scenariosRaw.slice(1).map((s, i) => `Scenario ${i + 1}: ${s}`);
-      } else if (scenariosRaw.length > 0) {
-        testCases = scenariosRaw.map((s, i) => scenariosRaw.length > 1 ? `Scenario ${i + 1}: ${s}` : s);
-      }
+      const testCases = parseGherkinScenarios(text);
 
       return {
         storyKey: story.key,

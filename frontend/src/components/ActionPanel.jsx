@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { AppContext } from '../context/AppContext';
 
 // Un componente simple de spinner para el estado de carga
@@ -21,8 +21,10 @@ const ActionPanel = () => {
     isLoading,
     aiModel,
     setAiModel,
-    handleGenerateContent, // Importamos la función del contexto
+    handleGenerateContent,
   } = useContext(AppContext);
+
+  const [customInstructions, setCustomInstructions] = useState('');
 
   const storiesSelectedCount = selectedStories.length;
   const isButtonDisabled = storiesSelectedCount === 0 || isLoading;
@@ -53,9 +55,17 @@ const ActionPanel = () => {
             : 'Selecciona una o más historias para empezar.'}
         </div>
 
+        <textarea
+          className="custom-instructions-textarea"
+          placeholder="Añade instrucciones adicionales para la IA aquí (opcional)..."
+          value={customInstructions}
+          onChange={(e) => setCustomInstructions(e.target.value)}
+          disabled={isLoading}
+        />
+
         <button
           className="generate-button"
-          onClick={handleGenerateContent} // Usamos la función del contexto
+          onClick={() => handleGenerateContent(customInstructions)}
           disabled={isButtonDisabled}
           title={storiesSelectedCount === 0 ? 'Debes seleccionar al menos una historia' : 'Generar casos de prueba'}
         >

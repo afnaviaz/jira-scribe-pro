@@ -1,21 +1,74 @@
 [
   {
+    "sprintName": "Sin Sprint",
     "storyKey": "FDM-5458",
     "storySummary": "[MX] BackEnd - Eliminar pagare No firmado en MiFiel desde el resumen de una operación",
     "testCases": [
-      "Scenario 1: [Partición de Equivalencia] Eliminar pagaré no firmado válido desde resumen de operación\n    Given que existe un pagaré no firmado asociado a una operación válida\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then se debe consumir el endpoint para eliminar el pagaré en MiFiel\n    And el pagaré debe eliminarse correctamente\n    And el sistema muestra confirmación de eliminación exitosa",
-      "Scenario 2: [Partición de Equivalencia] Intentar eliminar un pagaré ya firmado (inválido)\n    Given que existe un pagaré firmado asociado a una operación válida\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then no se debe consumir el endpoint para eliminar pagaré no firmado\n    And el sistema muestra un mensaje de error indicando que no se puede eliminar un pagaré firmado",
-      "Scenario 3: [Partición de Equivalencia] Intentar eliminar un pagaré inexistente (inválido)\n    Given que el pagaré no existe o ya fue eliminado\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then se consume el endpoint para eliminar pagaré\n    And el endpoint responde con error indicando pagaré no encontrado\n    And el sistema muestra mensaje de error \"Pagaré no encontrado\"",
-      "Scenario 4: [Análisis de Valores Límite] Eliminar pagaré no firmado con ID límite (mínimo válido)\n    Given que existe un pagaré no firmado con ID igual al mínimo válido (ej. ID=1)\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then el endpoint elimina correctamente el pagaré\n    And el sistema confirma la eliminación",
-      "Scenario 5: [Análisis de Valores Límite] Eliminar pagaré no firmado con ID límite (máximo válido)\n    Given que existe un pagaré no firmado con ID igual al máximo válido permitido (ej. ID=2147483647)\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then el endpoint elimina correctamente el pagaré\n    And el sistema confirma la eliminación",
-      "Scenario 6: [Tabla de Decisión] Respuesta del endpoint según estado del pagaré y disponibilidad del servicio\n    Given que el usuario intenta eliminar un pagaré con diferentes estados y condiciones del servicio\n\n    Examples:\n      | Estado del pagaré | Servicio disponible | Resultado esperado              |\n      | No firmado        | Sí                  | Eliminación exitosa            |\n      | No firmado        | No                  | Mensaje de error de servicio   |\n      | Firmado           | Sí                  | Mensaje de error no permitido  |\n      | Firmado           | No                  | Mensaje de error no permitido  |\n\n    # Para cada fila del Examples:\n    # Given que el pagaré está en estado <Estado del pagaré>\n    # And el servicio está <Servicio disponible>\n    # When el usuario intenta eliminar el pagaré\n    # Then se muestra <Resultado esperado>",
-      "Scenario 7: Outline: [Tabla de Decisión] Validar eliminación según estado y servicio\n\n    Given que el pagaré está en estado <EstadoDelPagare>\n    And el servicio de eliminación está <ServicioDisponible>\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then el sistema responde con <ResultadoEsperado>\n\n    Examples:\n      | EstadoDelPagare | ServicioDisponible | ResultadoEsperado                  |\n      | No firmado     | disponible         | eliminación exitosa               |\n      | No firmado     | no disponible      | error de servicio                 |\n      | Firmado       | disponible         | error: no se puede eliminar       |\n      | Firmado       | no disponible      | error: no se puede eliminar       |",
-      "Scenario 8: [Pruebas de Transición de Estado] Intentar eliminar pagaré en diferentes estados y verificar transición\n    Given que el pagaré está en estado \"No firmado\"\n    When el usuario elimina el pagaré\n    Then el pagaré cambia a estado \"Eliminado\"\n\n    Given que el pagaré está en estado \"Firmado\"\n    When el usuario intenta eliminar el pagaré\n    Then el estado del pagaré permanece \"Firmado\"\n    And se muestra mensaje de error indicando que no se puede eliminar",
-      "Scenario 9: [Caso Excepcional] Fallo del sistema al consumir el endpoint (timeout o error 500)\n    Given que el pagaré no firmado existe\n    And el endpoint para eliminar pagaré responde con error 500 o timeout\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then el sistema muestra mensaje de error \"No se pudo eliminar el pagaré por un problema del sistema, intente más tarde\"\n    And el pagaré permanece sin cambios",
-      "Scenario 10: [Caso Excepcional] Error de red o desconexión durante la eliminación\n    Given que el pagaré no firmado existe\n    And hay un error de red o desconexión al consumir el endpoint\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then el sistema muestra mensaje de error \"Error de conexión, verifique su red e intente nuevamente\"\n    And el pagaré permanece sin cambios",
-      "Scenario 11: [Validación de interfaz] Icono de eliminar pagaré no firmado visible solo si hay pagaré no firmado\n    Given que la operación tiene un pagaré no firmado asociado\n    Then el ícono para eliminar pagaré está visible y habilitado",
-      "Scenario 12: [Validación de interfaz] Icono de eliminar oculto o deshabilitado si no hay pagaré no firmado\n    Given que la operación no tiene pagaré no firmado asociado\n    Then el ícono para eliminar pagaré no está visible o está deshabilitado\n\n---\n\nCon estos e",
-      "Scenario 13: s se cubren las particiones válidas e inválidas, valores límite de IDs, la lógica condicional de estados y disponibilidad del servicio, las transiciones de estado relevantes y casos excepcionales de error o fallo del sistema."
+      {
+        "text": "Scenario 1: [Partición de Equivalencia] Eliminar pagaré no firmado válido desde resumen de operación\n    Given que existe un pagaré no firmado asociado a una operación válida\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then se debe consumir el endpoint para eliminar el pagaré en MiFiel\n    And el pagaré debe eliminarse correctamente\n    And el sistema muestra confirmación de eliminación exitosa",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 2: [Partición de Equivalencia] Intentar eliminar un pagaré ya firmado (inválido)\n    Given que existe un pagaré firmado asociado a una operación válida\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then no se debe consumir el endpoint para eliminar pagaré no firmado\n    And el sistema muestra un mensaje de error indicando que no se puede eliminar un pagaré firmado",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 3: [Partición de Equivalencia] Intentar eliminar un pagaré inexistente (inválido)\n    Given que el pagaré no existe o ya fue eliminado\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then se consume el endpoint para eliminar pagaré\n    And el endpoint responde con error indicando pagaré no encontrado\n    And el sistema muestra mensaje de error \"Pagaré no encontrado\"",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 4: [Análisis de Valores Límite] Eliminar pagaré no firmado con ID límite (mínimo válido)\n    Given que existe un pagaré no firmado con ID igual al mínimo válido (ej. ID=1)\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then el endpoint elimina correctamente el pagaré\n    And el sistema confirma la eliminación",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 5: [Análisis de Valores Límite] Eliminar pagaré no firmado con ID límite (máximo válido)\n    Given que existe un pagaré no firmado con ID igual al máximo válido permitido (ej. ID=2147483647)\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then el endpoint elimina correctamente el pagaré\n    And el sistema confirma la eliminación",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 6: [Tabla de Decisión] Respuesta del endpoint según estado del pagaré y disponibilidad del servicio\n    Given que el usuario intenta eliminar un pagaré con diferentes estados y condiciones del servicio\n\n    Examples:\n      | Estado del pagaré | Servicio disponible | Resultado esperado              |\n      | No firmado        | Sí                  | Eliminación exitosa            |\n      | No firmado        | No                  | Mensaje de error de servicio   |\n      | Firmado           | Sí                  | Mensaje de error no permitido  |\n      | Firmado           | No                  | Mensaje de error no permitido  |\n\n    # Para cada fila del Examples:\n    # Given que el pagaré está en estado <Estado del pagaré>\n    # And el servicio está <Servicio disponible>\n    # When el usuario intenta eliminar el pagaré\n    # Then se muestra <Resultado esperado>",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 7: Outline: [Tabla de Decisión] Validar eliminación según estado y servicio\n\n    Given que el pagaré está en estado <EstadoDelPagare>\n    And el servicio de eliminación está <ServicioDisponible>\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then el sistema responde con <ResultadoEsperado>\n\n    Examples:\n      | EstadoDelPagare | ServicioDisponible | ResultadoEsperado                  |\n      | No firmado     | disponible         | eliminación exitosa               |\n      | No firmado     | no disponible      | error de servicio                 |\n      | Firmado       | disponible         | error: no se puede eliminar       |\n      | Firmado       | no disponible      | error: no se puede eliminar       |",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 8: [Pruebas de Transición de Estado] Intentar eliminar pagaré en diferentes estados y verificar transición\n    Given que el pagaré está en estado \"No firmado\"\n    When el usuario elimina el pagaré\n    Then el pagaré cambia a estado \"Eliminado\"\n\n    Given que el pagaré está en estado \"Firmado\"\n    When el usuario intenta eliminar el pagaré\n    Then el estado del pagaré permanece \"Firmado\"\n    And se muestra mensaje de error indicando que no se puede eliminar",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 9: [Caso Excepcional] Fallo del sistema al consumir el endpoint (timeout o error 500)\n    Given que el pagaré no firmado existe\n    And el endpoint para eliminar pagaré responde con error 500 o timeout\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then el sistema muestra mensaje de error \"No se pudo eliminar el pagaré por un problema del sistema, intente más tarde\"\n    And el pagaré permanece sin cambios",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 10: [Caso Excepcional] Error de red o desconexión durante la eliminación\n    Given que el pagaré no firmado existe\n    And hay un error de red o desconexión al consumir el endpoint\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then el sistema muestra mensaje de error \"Error de conexión, verifique su red e intente nuevamente\"\n    And el pagaré permanece sin cambios",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 11: [Validación de interfaz] Icono de eliminar pagaré no firmado visible solo si hay pagaré no firmado\n    Given que la operación tiene un pagaré no firmado asociado\n    Then el ícono para eliminar pagaré está visible y habilitado",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 12: [Validación de interfaz] Icono de eliminar oculto o deshabilitado si no hay pagaré no firmado\n    Given que la operación no tiene pagaré no firmado asociado\n    Then el ícono para eliminar pagaré no está visible o está deshabilitado\n\n---\n\nCon estos e",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 13: s se cubren las particiones válidas e inválidas, valores límite de IDs, la lógica condicional de estados y disponibilidad del servicio, las transiciones de estado relevantes y casos excepcionales de error o fallo del sistema.",
+        "status": "Pendiente",
+        "evidence": ""
+      }
     ]
   },
   {
