@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useMemo, useContext } from 'react';
 import { AppContext } from '../context/AppContext';
-import { getSavedTestCases, saveTestCases as apiSaveTestCases } from '../services/api';
+import { getSavedTestCases, saveTestCases as apiSaveTestCases, createJiraBug } from '../services/api';
 
 const JIRA_BASE_URL = "https://finkargo.atlassian.net/browse/";
 
@@ -9,6 +9,21 @@ const EyeIcon = () => (
       <path d="M1 12s4-7 11-7 11 7 11 7-4 7-11 7S1 12 1 12z" />
       <circle cx="12" cy="12" r="3" />
     </svg>
+);
+
+const SaveIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+    <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2zM3 2h1v1H3V2zm2 0h1v1H5V2zM2 4h12v10H2V4z"/>
+    <path d="M5 12.5a.5.5 0 0 1 .5-.5h5a.5.5 0 0 1 0 1h-5a.5.5 0 0 1-.5-.5z"/>
+  </svg>
+);
+
+const UnlinkIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+    <path d="M6.354 5.5H4a3 3 0 0 0 0 6h3a3 3 0 0 0 2.83-4H9c-.086 0-.17.01-.25.031A2 2 0 0 1 7 10.5H4a2 2 0 1 1 0-4h1.535c.218-.376.495-.714.82-1z"/>
+    <path d="M9 5.5a3 3 0 0 0-2.83 4h1.098A2 2 0 0 1 9 6.5h3a2 2 0 1 1 0 4h-1.535a4.02 4.02 0 0 1-.82 1H12a3 3 0 1 0 0-6z"/>
+    <path d="M2.093 2.782a.5.5 0 1 1 .814-.564L13.782 13.5a.5.5 0 1 1-.814.564z"/>
+  </svg>
 );
 
 const BugIcon = () => (
@@ -24,6 +39,25 @@ const TrashIcon = () => (
     <path fillRule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
   </svg>
 );
+
+// Componente para resaltar el texto de búsqueda
+const HighlightedText = ({ text = '', highlight = '' }) => {
+  if (!highlight.trim()) {
+    return <span>{text}</span>;
+  }
+  // Escapa caracteres especiales del término de búsqueda para usarlo en el regex
+  const escapedHighlight = highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const regex = new RegExp(`(${escapedHighlight})`, 'gi');
+  const parts = text.split(regex);
+
+  return (
+    <span>
+      {parts.map((part, i) =>
+        regex.test(part) ? <mark key={i}>{part}</mark> : <span key={i}>{part}</span>
+      )}
+    </span>
+  );
+};
 
 // Define cuántos GRUPOS de sprints se mostrarán por página.
 const PROJECTS_PER_PAGE = 2; // Ahora paginamos por proyecto
@@ -114,6 +148,37 @@ function reducer(state, action) {
         },
       };
     }
+    case 'CREATE_BUG_SUCCESS': {
+      const { storyKey, testCaseIndex, bug } = action.payload;
+      return {
+        ...state,
+        editData: {
+          ...state.editData,
+          [storyKey]: state.editData[storyKey].map((tc, i) =>
+            i === testCaseIndex
+              ? { ...tc, bugLink: bug.key } // Añade el enlace al bug
+              : tc
+          ),
+        },
+        saveStatus: { storyKey: null, isSaving: false, message: '' }, // Limpia el estado de guardado
+      };
+    }
+    case 'UNLINK_BUG': {
+      const { storyKey, testCaseIndex } = action.payload;
+      return {
+        ...state,
+        editData: {
+          ...state.editData,
+          [storyKey]: state.editData[storyKey].map((tc, i) => {
+            if (i === testCaseIndex) {
+              const { bugLink, ...rest } = tc; // Desestructura para eliminar la propiedad bugLink
+              return rest;
+            }
+            return tc;
+          }),
+        },
+      };
+    }
     case 'SAVE_START':
       return { ...state, saveStatus: { storyKey: action.payload, isSaving: true, message: '' } };
     case 'SAVE_SUCCESS':
@@ -138,22 +203,40 @@ const CasosGuardadosScreen = () => {
       dispatch({ type: 'FETCH_START' });
       try {
         const data = await getSavedTestCases();
+
+        // 1. Data Validation: Ensure the API returned an array.
+        if (!Array.isArray(data)) {
+          throw new TypeError('La respuesta de la API no es un formato válido (se esperaba un array).');
+        }
+
         const standardizedData = data.map(caso => ({
           ...caso,
           sprintName: caso.sprintName || 'Sin Sprint',
           projectName: caso.projectName || 'Sin Proyecto',
+          // 2. Graceful Handling: Ensure testCases is always an array before mapping.
           testCases: (caso.testCases || []).map(tc =>
             typeof tc === 'string' ? { text: tc, status: 'Pendiente', evidence: '' } : tc
           )
         }));
+
         const initialEditData = standardizedData.reduce((acc, caso) => {
           acc[caso.storyKey] = caso.testCases;
           return acc;
         }, {});
+
         dispatch({ type: 'FETCH_SUCCESS', payload: { allCasos: standardizedData, editData: initialEditData } });
       } catch (err) {
-        console.error('Error al cargar casos guardados:', err);
-        dispatch({ type: 'FETCH_ERROR', payload: 'Error al cargar casos guardados.' });
+        // 3. Better Error Handling: Provide more specific feedback.
+        console.error('Error detallado al cargar casos guardados:', err);
+        let errorMessage = 'Ocurrió un error inesperado.';
+        if (err.response) { // Error from server (e.g., 4xx, 5xx)
+          errorMessage = `Error del servidor: ${err.response.data.message || err.response.statusText}`;
+        } else if (err.request) { // Network error
+          errorMessage = 'No se pudo conectar al servidor. Revisa tu conexión de red.';
+        } else if (err instanceof TypeError) { // Custom validation error from our check above
+          errorMessage = err.message;
+        }
+        dispatch({ type: 'FETCH_ERROR', payload: errorMessage });
       }
     };
     fetchCases();
@@ -161,8 +244,10 @@ const CasosGuardadosScreen = () => {
 
   // Filtra y agrupa los casos usando useMemo para optimizar el rendimiento.
   const casosAgrupados = useMemo(() => {
+    const lowercasedFilter = searchTerm.toLowerCase();
     const filteredCases = allCasos.filter(caso =>
-      caso.storyKey.toLowerCase().includes(searchTerm.toLowerCase())
+      caso.storyKey.toLowerCase().includes(lowercasedFilter) ||
+      (caso.storySummary && caso.storySummary.toLowerCase().includes(lowercasedFilter))
     );
 
     // Agrupa primero por proyecto, luego por sprint
@@ -228,16 +313,26 @@ const CasosGuardadosScreen = () => {
     }
   };
 
-  const handleSave = async (caso) => {
+  const handleUnlinkBug = (storyKey, testCaseIndex) => {
+    if (window.confirm('¿Estás seguro de que quieres desvincular este bug? El bug no se eliminará de Jira, solo se quitará el enlace. Deberás guardar los cambios para que sea permanente.')) {
+      dispatch({ type: 'UNLINK_BUG', payload: { storyKey, testCaseIndex } });
+    }
+  };
+
+  const handleSave = async (caso, updatedEditData) => {
     const storyKey = caso.storyKey;
+    // Fallback to ensure projectKey is always present when saving.
+    const projectKey = caso.projectKey || storyKey.split('-')[0];
+
     dispatch({ type: 'SAVE_START', payload: storyKey });
     const payload = {
-      projectKey: caso.projectKey,
-      projectName: caso.projectName,
+      projectKey: projectKey,
+      // Use projectKey as a fallback for projectName if it's missing.
+      projectName: caso.projectName || projectKey,
       sprintName: caso.sprintName,
       storyKey: storyKey,
       storySummary: caso.storySummary,
-      testCases: editData[storyKey]
+      testCases: updatedEditData ? updatedEditData[storyKey] : editData[storyKey]
     };
     try {
       await apiSaveTestCases(payload);
@@ -250,11 +345,94 @@ const CasosGuardadosScreen = () => {
     }
   };
 
-  const handleCreateBug = (caso, testCase) => {
+  const handleCreateBug = async (caso, testCase, testCaseIndex) => {
+    // 1. Validación de Evidencia
+    if (!testCase.evidence || !testCase.evidence.trim()) {
+      alert('Por favor, añade un enlace de evidencia antes de crear el bug.');
+      return;
+    }
+
+    // 2. Solicitud de Pasos de Reproducción
+    const stepsInput = window.prompt("Por favor, describe los pasos para reproducir el bug (un paso por línea):");
+
+    if (!stepsInput || !stepsInput.trim()) {
+      alert('Los pasos para reproducir son obligatorios para crear el bug.');
+      return;
+    }
+
+    const stepsList = stepsInput.split('\n').filter(step => step.trim() !== '').map(step => ({
+      type: 'listItem',
+      content: [{ type: 'paragraph', content: [{ type: 'text', text: step.trim() }] }]
+    }));
+
+    // Fallback to extract project key from story key if not present in the 'caso' object
+    const projectKey = caso.projectKey || caso.storyKey.split('-')[0];
+    if (!projectKey) {
+        alert('No se pudo determinar la clave del proyecto para crear el bug.');
+        return;
+    }
+
     const summary = `BUG: ${caso.storyKey} - Falla en escenario de prueba`;
-    const description = `Se encontró un error al ejecutar el siguiente caso de prueba para la historia ${caso.storyKey}:\n\n{code}\n${testCase.text}\n{code}\n\n*Pasos para reproducir:*\n1. \n2. \n3. \n\n*Resultado esperado:*\n\n\n*Resultado actual:*\n\n`;
-    const jiraUrl = `${JIRA_BASE_URL.split('/browse/')[0]}/secure/CreateIssueDetails!init.jspa?pid=${caso.projectKey.split('-')[0]}&issuetype=10004&summary=${encodeURIComponent(summary)}&description=${encodeURIComponent(description)}`;
-    window.open(jiraUrl, '_blank');
+    
+    // Build the description using Atlassian Document Format (ADF) for rich text
+    const descriptionAdf = {
+      type: 'doc',
+      version: 1,
+      content: [
+        {
+          type: 'paragraph',
+          content: [
+            { type: 'text', text: `Se encontró un error al ejecutar el siguiente caso de prueba para la historia ` },
+            { type: 'text', text: caso.storyKey, marks: [{ type: 'strong' }] },
+            { type: 'text', text: ':' },
+          ],
+        },
+        {
+          type: 'codeBlock',
+          attrs: { language: 'gherkin' },
+          content: [{ type: 'text', text: testCase.text }],
+        },
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Pasos para reproducir:', marks: [{ type: 'strong' }] }],
+        },
+        { type: 'orderedList', content: stepsList.length > 0 ? stepsList : [ { type: 'listItem', content: [{ type: 'paragraph', content: [{ type: 'text', text: '(No se proporcionaron pasos)' }] }] } ] },
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Resultado esperado:', marks: [{ type: 'strong' }] }],
+        },
+        { type: 'paragraph', content: [{ type: 'text', text: ' ' }] },
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Resultado actual:', marks: [{ type: 'strong' }] }],
+        },
+        { type: 'paragraph', content: [{ type: 'text', text: ' ' }] },
+        {
+          type: 'paragraph',
+          content: [{ type: 'text', text: 'Evidencia:', marks: [{ type: 'strong' }] }],
+        },
+        { type: 'paragraph', content: [{ type: 'text', text: testCase.evidence || '(Sin evidencia adjunta)' }] },
+      ],
+    };
+    
+    dispatch({ type: 'SAVE_START', payload: caso.storyKey }); // Reutilizamos el estado de guardado para mostrar feedback
+    try {
+      const newBug = await createJiraBug({
+        projectKey: projectKey,
+        summary,
+        description: descriptionAdf,
+        parentKey: caso.storyKey,
+      });
+      dispatch({ type: 'CREATE_BUG_SUCCESS', payload: { storyKey: caso.storyKey, testCaseIndex, bug: newBug } });
+      // Automatically save the changes to persist the new bugLink
+      const updatedEditData = { ...editData, [caso.storyKey]: editData[caso.storyKey].map((tc, i) => i === testCaseIndex ? { ...tc, bugLink: newBug.key } : tc) };
+      await handleSave(caso, updatedEditData);
+    } catch (error) {
+      console.error('Error al crear el bug:', error);
+      dispatch({ type: 'SAVE_ERROR', payload: caso.storyKey });
+      alert(`No se pudo crear el bug en Jira: ${error.message}`);
+      dispatch({ type: 'RESET_SAVE_STATUS' });
+    }
   };
 
   const exportToJira = (caso, idx) => {
@@ -312,7 +490,9 @@ const CasosGuardadosScreen = () => {
                       {casos.map(caso => (
                         <div key={caso.storyKey} className="saved-case-card">
                           <div className="saved-case-header">
-                            <h4 className="saved-case-title">{caso.storyKey} - {caso.storySummary}</h4>
+                            <h4 className="saved-case-title">
+                              <HighlightedText text={caso.storyKey} highlight={searchTerm} /> - <HighlightedText text={caso.storySummary} highlight={searchTerm} />
+                            </h4>
                             <a href={`${JIRA_BASE_URL}${caso.storyKey}`} target="_blank" rel="noopener noreferrer" title="Ver en Jira" className="jira-link">
                               <EyeIcon />
                             </a>
@@ -328,18 +508,46 @@ const CasosGuardadosScreen = () => {
                                     <option value="NOK">NOK</option>
                                   </select>
                                   {test.status === 'NOK' && (
-                                    <input type="text" className="edit-case-input" placeholder="Enlace de evidencia" value={test.evidence} onChange={e => handleEvidenceChange(caso.storyKey, idx, e.target.value)} />
+                                    <>
+                                      <input type="text" className="edit-case-input" placeholder="Enlace de evidencia" value={test.evidence} onChange={e => handleEvidenceChange(caso.storyKey, idx, e.target.value)} />
+                                      {test.bugLink ? (
+                                        <div className="bug-link-container">
+                                          <a href={`${JIRA_BASE_URL}${test.bugLink}`} target="_blank" rel="noopener noreferrer" className="bug-link-button">
+                                            <BugIcon /> {test.bugLink}
+                                          </a>
+                                          <button
+                                            className="unlink-bug-button"
+                                            title="Desvincular este bug"
+                                            onClick={() => handleUnlinkBug(caso.storyKey, idx)}
+                                          >
+                                            <UnlinkIcon />
+                                          </button>
+                                        </div>
+                                      ) : (
+                                        <button
+                                          className="create-bug-button"
+                                          onClick={() => handleCreateBug(caso, test, idx)}
+                                          disabled={saveStatus.isSaving && saveStatus.storyKey === caso.storyKey}
+                                        >
+                                          <BugIcon /> 
+                                          {saveStatus.isSaving && saveStatus.storyKey === caso.storyKey ? 'Creando...' : 'Crear Bug'}
+                                        </button>
+                                      )}
+                                    </>
                                   )}
-                                  <button className="export-case-button" onClick={() => exportToJira(caso, idx)}>Exportar a Jira</button>
-                                  {test.status === 'NOK' && (
-                                    <button className="create-bug-button" onClick={() => handleCreateBug(caso, test)}>
-                                      <BugIcon /> Crear Bug
+                                  <div className="case-row-actions">
+                                    <button
+                                      className="save-case-button"
+                                      title="Guardar cambios de esta historia"
+                                      onClick={() => handleSave(caso)}
+                                      disabled={saveStatus.isSaving && saveStatus.storyKey === caso.storyKey}
+                                    >
+                                      <SaveIcon />
                                     </button>
-                                  )}
-                                  <button className="delete-case-button" title="Eliminar caso de prueba" onClick={() => handleDeleteTestCase(caso.storyKey, idx)}>
-                                    <TrashIcon />
+                                    <button className="delete-case-button" title="Eliminar caso de prueba" onClick={() => handleDeleteTestCase(caso.storyKey, idx)}>
+                                      <TrashIcon />
                                     </button>
-                                  )}
+                                  </div>
                                 </div>
                               </div>
                             ))}
@@ -357,7 +565,7 @@ const CasosGuardadosScreen = () => {
                                   Eliminar Todos
                                 </button>
                                 <button className="save-changes-button" onClick={() => handleSave(caso)} disabled={saveStatus.isSaving && saveStatus.storyKey === caso.storyKey}>
-                                  {saveStatus.isSaving && saveStatus.storyKey === caso.storyKey ? 'Guardando...' : 'Guardar Cambios'}
+                                  {saveStatus.isSaving && saveStatus.storyKey === caso.storyKey ? 'Guardando...' : 'Guardar Todos los Cambios'}
                                 </button>
                               </div>
                             </div>

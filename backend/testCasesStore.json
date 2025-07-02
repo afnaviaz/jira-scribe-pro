@@ -6,8 +6,9 @@
     "testCases": [
       {
         "text": "Scenario 1: [Partición de Equivalencia] Eliminar pagaré no firmado válido desde resumen de operación\n    Given que existe un pagaré no firmado asociado a una operación válida\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then se debe consumir el endpoint para eliminar el pagaré en MiFiel\n    And el pagaré debe eliminarse correctamente\n    And el sistema muestra confirmación de eliminación exitosa",
-        "status": "Pendiente",
-        "evidence": ""
+        "status": "NOK",
+        "evidence": "",
+        "bugLink": "FDM-5735"
       },
       {
         "text": "Scenario 2: [Partición de Equivalencia] Intentar eliminar un pagaré ya firmado (inválido)\n    Given que existe un pagaré firmado asociado a una operación válida\n    When el usuario hace clic en el ícono para eliminar el pagaré\n    Then no se debe consumir el endpoint para eliminar pagaré no firmado\n    And el sistema muestra un mensaje de error indicando que no se puede eliminar un pagaré firmado",

@@ -20,6 +20,11 @@ export async function generateContent(stories, model) {
   return response.data; // El backend devuelve el array de resultados directamente.
 }
 
+export async function createJiraBug(bugData) {
+  const response = await apiClient.post('/jira/create-bug', bugData);
+  return response.data;
+}
+
 export async function exportCasesToJira(storyKey, casesText) {
   return apiClient.post('/jira/add-comment', { storyKey, comment: casesText });
 }
@@ -52,6 +57,7 @@ export default {
   getSprints,
   getStories,
   generateContent,
+  createJiraBug,
   exportCasesToJira,
   saveTestCases,
   getSavedTestCases,

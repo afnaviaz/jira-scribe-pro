@@ -1,84 +1,70 @@
-import config from '../config/index.js';
 import axios from 'axios';
+import config from '../config/index.js';
 
-const jiraApi = axios.create({
-  baseURL: config.jiraUrl,
-  auth: {
-    username: config.jiraEmail,
-    password: config.jiraApiToken,
-  },
-  headers: {
-    'Accept': 'application/json'
+const JIRA_API_URL = `https://finkargo.atlassian.net/rest/api/3`;
+const AUTH_TOKEN = Buffer.from(`${config.jiraEmail}:${config.jiraApiToken}`).toString('base64');
+
+/**
+ * Creates a link between two Jira issues.
+ * @param {string} inwardIssueKey - The key of the issue the link is pointing to (e.g., the new bug).
+ * @param {string} outwardIssueKey - The key of the issue the link is coming from (e.g., the story).
+ */
+async function linkIssues(inwardIssueKey, outwardIssueKey) {
+  const linkData = {
+    type: {
+      name: 'Relates', // This is a common, default link type.
+    },
+    inwardIssue: { key: inwardIssueKey },
+    outwardIssue: { key: outwardIssueKey },
+  };
+
+  await axios.post(`${JIRA_API_URL}/issueLink`, linkData, {
+    headers: {
+      'Authorization': `Basic ${AUTH_TOKEN}`,
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+  });
+}
+
+export async function createBugInJira({ projectKey, summary, description, parentKey }) {
+  const issueData = {
+    fields: {
+      project: {
+        key: projectKey,
+      },
+      summary,
+      description, // Expecting ADF format from frontend
+      issuetype: {
+        name: 'Bug',
+      },
+      // The 'parent' field is removed to avoid the hierarchy error.
+      // We will link the issues in a separate step.
+    },
+  };
+
+  const response = await axios.post(`${JIRA_API_URL}/issue`, issueData, {
+    headers: {
+      'Authorization': `Basic ${AUTH_TOKEN}`,
+      'Accept': 'application/json',
+      'Content-Type': 'application/json',
+    },
+  });
+
+  const newBug = {
+    id: response.data.id,
+    key: response.data.key,
+    self: response.data.self,
+  };
+
+  // After creating the bug, link it to the parent story.
+  try {
+    await linkIssues(newBug.key, parentKey);
+  } catch (linkError) {
+    // Log the linking error but don't fail the whole operation,
+    // as the bug was still created successfully.
+    console.error(`Bug ${newBug.key} created, but failed to link to story ${parentKey}:`, linkError.response?.data || linkError.message);
   }
-});
 
-export const getProjects = async () => {
-  return Promise.resolve([
-    { key: 'MKT', name: 'Innovation' },
-    { key: 'FDM', name: 'Backbone' },
-    { key: 'CST', name: 'Common Service' },
-   
-  ]);
-};
-
-export const getSprintsByProject = async (projectKey) => {
-    const boardsResponse = await jiraApi.get(`/rest/agile/1.0/board`, {
-        params: { projectKeyOrId: projectKey },
-    });
-    if (boardsResponse.data.values.length === 0) {
-        throw new Error('No se encontraron tableros para este proyecto.');
-    }
-
-    let allSprints = [];
-
-    for (const board of boardsResponse.data.values) {
-        let sprints = [];
-        let startAt = 0;
-        let isLast = false;
-        const maxResults = 50;
-
-        while (!isLast) {
-            const sprintsResponse = await jiraApi.get(
-                `/rest/agile/1.0/board/${board.id}/sprint`,
-                { params: { startAt, maxResults } }
-            );
-            sprints = sprints.concat(sprintsResponse.data.values);
-            isLast = sprintsResponse.data.isLast;
-            startAt += maxResults;
-        }
-
-        allSprints = allSprints.concat(sprints);
-    }
-
-    // Opcional: eliminar sprints duplicados por id
-    const uniqueSprints = [];
-    const seen = new Set();
-    for (const sprint of allSprints) {
-        if (!seen.has(sprint.id)) {
-            uniqueSprints.push(sprint);
-            seen.add(sprint.id);
-        }
-    }
-
-    return uniqueSprints;
-};
-
-export const getStoriesBySprint = async (sprintId) => {
-    const jql = `sprint = ${sprintId} AND issuetype = "Story" ORDER BY created DESC`;
-    const response = await jiraApi.get(`/rest/api/3/search`, {
-        params: { jql, fields: "summary,description,status" },
-    });
-    return response.data.issues;
-};
-
-export const addCommentToJira = async (issueKey, comment) => {
-  await jiraApi.post(
-    `/rest/api/3/issue/${issueKey}/comment`,
-    { body: { type: "doc", version: 1, content: [{ type: "paragraph", content: [{ type: "text", text: comment }]}] } },
-    {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }
-  );
-};
+  return newBug;
+}
