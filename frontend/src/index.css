@@ -706,6 +706,8 @@ body {
 .edit-case-select,
 .edit-case-input,
 .export-case-button,
+.save-case-button,
+.unlink-bug-button,
 .delete-case-button,
 .create-bug-button,
 .bug-link-button {
@@ -803,6 +805,29 @@ body {
   justify-content: center;
 }
 
+.save-case-button {
+  background-color: var(--color-card-bg);
+  color: var(--color-primary-accent);
+  border: 1px solid var(--color-primary-accent);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.save-case-button:hover:not(:disabled) {
+  background-color: var(--color-primary-accent);
+  color: var(--color-text-light);
+}
+
+.case-row-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+
 .delete-case-button:hover {
   background-color: var(--color-danger);
   color: var(--color-text-light);
@@ -819,6 +844,32 @@ body {
 }
 .create-bug-button:hover {
   background-color: var(--color-danger-dark);
+}
+
+.bug-link-container {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+}
+
+.bug-link-container .bug-link-button {
+  flex-grow: 1; /* Make the link take up most of the space */
+  width: auto; /* Override the default */
+}
+
+.unlink-bug-button {
+  flex-shrink: 0;
+  background-color: var(--color-card-bg);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border-light);
+  padding: 8px;
+  width: auto;
+}
+
+.unlink-bug-button:hover {
+  background-color: var(--color-page-bg);
+  color: var(--color-danger);
+  border-color: var(--color-danger);
 }
 
 .bug-link-button {
