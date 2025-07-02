@@ -454,5 +454,47 @@
         "evidence": ""
       }
     ]
+  },
+  {
+    "sprintName": "Sprint CST [2025] W20/W22",
+    "storyKey": "CST-98",
+    "storySummary": "Como dev, Quiero desacoplar la lógica de DocuSign del servicio msa-api-co, Para centralizarla en el nuevo microservicio de integraciones y facilitar su mantenimiento y escalabilidad.",
+    "testCases": [
+      {
+        "text": "Scenario 1: s para validar la correcta eliminación de lógica, redirección de llamadas, y mantenimiento de funcionalidad, así como pruebas regresivas.",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 2: [Pruebas de integración y regresión] Validar que la lógica de DocuSign fue eliminada de msa-api-co y que las llamadas se redirigen al microservicio docusing\n    Given el servicio msa-api-co con la lógica de DocuSign desacoplada\n    When se invoca un endpoint de msa-api-co que previamente contenía lógica de DocuSign\n    Then msa-api-co no debe ejecutar la lógica de generación, validación, firma o consulta de sobres internamente\n    And msa-api-co debe realizar una llamada correcta al microservicio docusing con los parámetros esperados\n    And la respuesta final al consumidor debe ser equivalente a la funcionalidad previa",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 3: [Pruebas de regresión funcional] Verificar que la funcionalidad de generación, validación, firma y consulta de sobres DocuSign se mantiene intacta tras desacoplar la lógica\n    Given el microservicio docusing desplegado y disponible en ambiente de testing\n    When se solicita la generación, validación, firma o consulta de un sobre a través de msa-api-co\n    Then el microservicio docusing debe procesar correctamente la solicitud y devolver resultados válidos\n    And msa-api-co debe retornar la respuesta esperada al cliente final sin errores",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 4: [Pruebas de error / fallo sistema] Validar comportamiento cuando el microservicio docusing no está disponible o responde con error\n    Given el microservicio docusing no disponible o responde con error 5xx\n    When msa-api-co realiza una llamada a docusing para procesar una solicitud de sobre DocuSign\n    Then msa-api-co debe manejar el error adecuadamente\n    And debe retornar un mensaje de error claro y consistente al cliente final\n    And no debe contener lógica residual de DocuSign que provoque fallos adicionales",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 5: [Pruebas de contrato y comunicación entre servicios] Validar que los contratos entre msa-api-co y docusing están correctamente definidos y respetados\n    Given los contratos API definidos entre msa-api-co y docusing\n    When msa-api-co realiza llamadas a docusing con datos válidos e inválidos\n    Then docusing debe validar y procesar correctamente las solicitudes según contrato\n    And msa-api-co debe manejar las respuestas y errores conforme al contrato",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 6: [Pruebas de regresión automatizadas] Validar que todas las pruebas automáticas previas relacionadas con DocuSign pasan sin errores tras el desacoplamiento\n    Given el conjunto de pruebas automáticas existentes para la funcionalidad DocuSign en msa-api-co\n    When se ejecutan dichas pruebas en el entorno con la nueva arquitectura desacoplada\n    Then todas las pruebas deben pasar exitosamente sin fallos ni regresiones",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 7: [Pruebas manuales de aceptación] Validar manualmente las funcionalidades de generación, firma y consulta de sobres DocuSign a través de msa-api-co con la lógica desacoplada\n    Given un tester con acceso a ambientes de testing con msa-api-co y docusing desplegados\n    When el tester realiza pruebas manuales de los flujos de DocuSign\n    Then la funcionalidad debe operar igual que antes del desacoplamiento\n    And no debe haber errores ni comportamientos inesperados\n\n# Nota: No se aplican particiones de equivalencia ni análisis de valores límite ni tablas de decisión ni pruebas de transición de estado, dado que la HU no describe campos de entrada ni estados explícitos, sino un cambio en arquitectura e integración.",
+        "status": "Pendiente",
+        "evidence": ""
+      }
+    ]
   }
 ]

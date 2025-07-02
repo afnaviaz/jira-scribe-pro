@@ -597,6 +597,28 @@
   animation: spin 1s ease-in-out infinite;
 }
 
+/* === Sprint Grouping in Saved Cases === */
+.sprint-group {
+  margin-bottom: 48px;
+}
+
+.sprint-group:last-of-type {
+  margin-bottom: 24px;
+}
+
+.sprint-group-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #1a2257;
+  padding-bottom: 16px;
+  margin-bottom: 24px;
+  border-bottom: 2px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  background-color: #f7f8fa; /* Debe coincidir con el fondo del contenedor */
+  z-index: 10;
+}
+
 /* === CasosGuardadosScreen Styles === */
 
 .saved-cases-container {
@@ -625,12 +647,20 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
+  padding: 16px 20px;
   background-color: #f7f8fa;
   border-bottom: 1px solid #e2e8f0;
 }
 
-.saved-case-header .sprint-name {
+.saved-case-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: #1a2257;
+  flex-grow: 1;
+}
+
+.saved-case-header .sprint-name { /* Esta clase ya no se usa en la cabecera */
   font-size: 14px;
   font-weight: 600;
   color: #4a5568;
@@ -649,12 +679,6 @@
 
 .saved-case-body {
   padding: 20px;
-}
-
-.saved-case-body h4 {
-  margin: 0 0 20px 0;
-  font-size: 18px;
-  color: #1a2257;
 }
 
 .edit-case-row {
@@ -739,3 +763,42 @@
 
 .save-feedback.success { color: #2f855a; }
 .save-feedback.error { color: #c53030; }
+
+/* === Pagination Controls === */
+.pagination-controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 32px;
+  padding-top: 24px;
+  border-top: 1px solid #e2e8f0;
+  gap: 16px;
+}
+
+.pagination-button {
+  padding: 8px 16px;
+  font-weight: 600;
+  background-color: #fff;
+  color: #1a2257;
+  border: 1px solid #cbd5e0;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+.pagination-button:hover:not(:disabled) {
+  background-color: #e0e7ff;
+}
+
+.pagination-button:disabled {
+  background-color: #f7f8fa;
+  color: #a0aec0;
+  cursor: not-allowed;
+  border-color: #e2e8f0;
+}
+
+.pagination-info {
+  font-size: 14px;
+  font-weight: 500;
+  color: #4a5568;
+}
