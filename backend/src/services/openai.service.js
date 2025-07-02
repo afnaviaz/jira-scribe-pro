@@ -1,8 +1,7 @@
 import axios from 'axios';
 import config from '../config/index.js';
-import express from 'express';
 import { extractJiraDescription } from '../utils/descriptionExtractor.js'; // Importa la función centralizada
-const router = express.Router();
+import { parseGherkinScenarios } from '../utils/aiResponseParser.js';
 
 /**
  * Generates a detailed prompt for an AI to create exhaustive Gherkin test cases
@@ -52,7 +51,7 @@ const getGherkinPrompt = (storiesText) => {
   `;
 };
 
-export const generateContent = async (stories, type) => {
+export const generateContent = async (stories) => {
   const generationPromises = stories.map(async (story) => {
     const descText = extractJiraDescription(story.fields.description);
     const singleStoryText = `HU ID: ${story.key}\nTítulo: ${story.fields.summary}\nDescripción: ${descText || 'Sin descripción'}`;
@@ -62,7 +61,8 @@ export const generateContent = async (stories, type) => {
       const response = await axios.post(
         'https://api.openai.com/v1/chat/completions',
         {
-          model: 'gpt-4.1-mini',
+          // El modelo 'gpt-4.1-mini' no existe. Usamos un modelo válido y eficiente.
+          model: 'gpt-4o-mini',
           messages: [
             { role: 'system', content: 'Eres un asistente experto en QA y análisis de software.' },
             { role: 'user', content: prompt },
@@ -78,19 +78,7 @@ export const generateContent = async (stories, type) => {
 
       const aiText = response.data.choices[0].message.content;
       console.log(`Texto generado por OpenAI para ${story.key}:`, aiText);
-
-      // Parseo simple de escenarios para una única respuesta
-      const scenariosRaw = aiText.split(/Scenario\s*(?:\d+\s*:)?:?/gi)
-        .map(s => s.trim())
-        .filter(Boolean);
-
-      let testCases = [];
-      if (scenariosRaw.length > 1 && scenariosRaw[0].toUpperCase().startsWith("FEATURE:")) {
-        testCases = scenariosRaw.slice(1).map((s, i) => `Scenario ${i + 1}: ${s}`);
-      } else if (scenariosRaw.length > 0) {
-        testCases = scenariosRaw.map((s, i) => scenariosRaw.length > 1 ? `Scenario ${i + 1}: ${s}` : s);
-      }
-
+      const testCases = parseGherkinScenarios(aiText);
       return {
         storyKey: story.key,
         storySummary: story.fields.summary,
@@ -129,7 +117,7 @@ El resultado debe estar en formato Markdown.
   const response = await axios.post(
     'https://api.openai.com/v1/chat/completions',
     {
-      model: 'gpt-4.1-mini',
+      model: 'gpt-4o-mini',
       messages: [
         { role: 'system', content: 'Eres un asistente experto en QA y análisis de software.' },
         { role: 'user', content: prompt },
@@ -145,5 +133,3 @@ El resultado debe estar en formato Markdown.
 
   return response.data.choices[0].message.content;
 }
-
-export default router;

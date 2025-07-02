@@ -1,10 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { AppContext } from '../context/AppContext';
 import { getProjects } from '../services/api';
 
 const ProjectSelector = () => {
     const {
-        setProjects,
+        projects, // Usar la lista de proyectos del contexto
+        setProjects, // Para actualizar el contexto
         setError,
         selectedProject,
         setSelectedProject,
@@ -17,20 +18,17 @@ const ProjectSelector = () => {
         setStoriesWithCases  // Añadido para desestructurar
     } = useContext(AppContext);
 
-    const [projects, setProjectsState] = useState([]);
-
     useEffect(() => {
         const fetchProjects = async () => {
             try {
                 const projectsData = await getProjects(); // getProjects() ya devuelve el array de datos
                 setProjects(projectsData);
-                setProjectsState(projectsData);
             } catch (err) {
                 setError('Error al cargar los proyectos de Jira.');
             }
         };
         fetchProjects();
-    }, [setProjects, setError]); // Se mantiene para asegurar que se ejecuta si el contexto cambia, pero podría simplificarse a [] si el contexto es estable.
+    }, [setProjects, setError]);
 
     const handleProjectChange = (e) => {
         const newProjectKey = e.target.value;
