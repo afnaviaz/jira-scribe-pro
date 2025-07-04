@@ -454,5 +454,92 @@
         "evidence": ""
       }
     ]
+  },
+  {
+    "sprintName": "Back-Bone [2025] W30/W33",
+    "storyKey": "STT-123",
+    "storySummary": "[CO][MX] FrontEnd - Agregar opción para habilitar enlace \"Edición de solicitud\" en gestión de cuentas",
+    "testCases": [
+      {
+        "text": "Scenario 1: Permitir edición cuando botón habilitado y estado válido\n  # Técnica ISTQB: Partición de Equivalencia y Análisis de Valores Límite\n  # --------------------------------------------------------",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 2: Outline 1: Kam puede ver y usar enlace \"Editar Solicitud\" si botón habilitado y estado válido\n    Given que el analista de mesa de control ha <EstadoBoton> el botón \"Permisos de edición del Kam\"\n    When el Kam visualiza la gestión de cuentas con estado \"<EstadoSolicitud>\"\n    Then el Kam <VisualizaEnlace>\n\n    Examples:\n      | EstadoBoton | EstadoSolicitud    | VisualizaEnlace            |\n      | habilitado  | Aprobado          | visualiza el enlace        |\n      | habilitado  | Operando          | visualiza el enlace        |\n      | habilitado  | Listo para Operar | visualiza el enlace        |\n\n  # --------------------------------------------------------\n  #",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 3: Kam no ve enlace cuando botón deshabilitado aunque estado válido\n  # Técnica ISTQB: Partición de Equivalencia\n  # --------------------------------------------------------",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 4: Outline 2: Kam no visualiza enlace \"Editar Solicitud\" si botón deshabilitado\n    Given que el analista de mesa de control ha <EstadoBoton> el botón \"Permisos de edición del Kam\"\n    When el Kam visualiza la gestión de cuentas con estado \"<EstadoSolicitud>\"\n    Then el Kam no visualiza el enlace \"Editar Solicitud\"\n\n    Examples:\n      | EstadoBoton | EstadoSolicitud    |\n      | deshabilitado | Aprobado        |\n      | deshabilitado | Operando        |\n      | deshabilitado | Listo para Operar|\n\n  # --------------------------------------------------------\n  #",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 5: Kam no ve enlace cuando estado inválido aunque botón habilitado\n  # Técnica ISTQB: Partición de Equivalencia y Análisis de Valores Límite\n  # --------------------------------------------------------",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 6: Outline 3: Kam no visualiza enlace \"Editar Solicitud\" si estado no es Aprobado, Operando o Listo para Operar\n    Given que el analista de mesa de control ha habilitado el botón \"Permisos de edición del Kam\"\n    When el Kam visualiza la gestión de cuentas con estado \"<EstadoSolicitud>\"\n    Then el Kam no visualiza el enlace \"Editar Solicitud\"\n\n    Examples:\n      | EstadoSolicitud       |\n      | Pendiente             |\n      | En Revisión de Kam    |\n      | Rechazado             |\n      | Cancelado             |\n\n  # --------------------------------------------------------\n  #",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 7: Transición de estado no afecta visibilidad del enlace si botón habilitado\n  # Técnica ISTQB: Pruebas de Transición de Estado\n  # --------------------------------------------------------",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 8: Outline 4: El enlace \"Editar Solicitud\" permanece visible al cambiar estado entre Aprobado, Operando y Listo para Operar si botón habilitado\n    Given que el analista de mesa de control ha habilitado el botón \"Permisos de edición del Kam\"\n    And la solicitud cambia su estado de \"<EstadoInicial>\" a \"<EstadoFinal>\"\n    When el Kam visualiza la gestión de cuentas en estado \"<EstadoFinal>\"\n    Then el Kam visualiza el enlace \"Editar Solicitud\"\n\n    Examples:\n      | EstadoInicial   | EstadoFinal     |\n      | Aprobado       | Operando       |\n      | Operando       | Listo para Operar |\n      | Listo para Operar | Aprobado     |\n\n  # --------------------------------------------------------\n  #",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 9: Transición de estado inválida no cambia visibilidad del enlace si botón habilitado\n  # Técnica ISTQB: Pruebas de Transición de Estado\n  # --------------------------------------------------------",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 10: Outline 5: El enlace \"Editar Solicitud\" no aparece si estado cambia a inválido aunque botón habilitado\n    Given que el analista de mesa de control ha habilitado el botón \"Permisos de edición del Kam\"\n    And la solicitud cambia su estado de \"<EstadoInicial>\" a \"<EstadoFinal>\"\n    When el Kam visualiza la gestión de cuentas en estado \"<EstadoFinal>\"\n    Then el Kam no visualiza el enlace \"Editar Solicitud\"\n\n    Examples:\n      | EstadoInicial | EstadoFinal     |\n      | Aprobado     | Pendiente       |\n      | Operando     | Rechazado       |\n      | Listo para Operar | Cancelado   |\n\n  # --------------------------------------------------------\n  #",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 11: Error de sistema al cargar permisos\n  # Técnica ISTQB: Caso excepcional - fallo del sistema\n  # --------------------------------------------------------",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 12: Mostrar mensaje de error si falla la carga del estado del botón \"Permisos de edición del Kam\"\n    Given que el sistema falla al obtener el estado del botón \"Permisos de edición del Kam\"\n    When el Kam visualiza la gestión de cuentas con estado \"Aprobado\"\n    Then el sistema muestra un mensaje de error \"No se pudo cargar el permiso de edición\"\n    And el Kam no visualiza el enlace \"Editar Solicitud\"\n\n  # --------------------------------------------------------\n  #",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 13: Timeout al cargar la gestión de cuentas\n  # Técnica ISTQB: Caso excepcional - timeout\n  # --------------------------------------------------------",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 14: Mostrar mensaje de timeout al cargar la gestión de cuentas\n    Given que la carga de la gestión de cuentas tarda más de 30 segundos\n    When el Kam intenta acceder a la gestión de cuentas\n    Then el sistema muestra un mensaje \"La carga ha tardado demasiado. Intente nuevamente.\"\n    And el Kam no visualiza el enlace \"Editar Solicitud\"\n\n  # --------------------------------------------------------\n  #",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 15: Tabla de decisión para visibilidad del enlace según estado y botón\n  # Técnica ISTQB: Tabla de Decisión\n  # --------------------------------------------------------\n  # Tabla de decisión (simplificada):\n  # | EstadoSolicitud     | Botón habilitado | Enlace visible? |\n  # |---------------------|-----------------|-----------------|\n  # | Aprobado            | Sí              | Sí              |\n  # | Aprobado            | No              | No              |\n  # | Operando            | Sí              | Sí              |\n  # | Operando            | No              | No              |\n  # | Listo para Operar   | Sí              | Sí              |\n  # | Listo para Operar   | No              | No              |\n  # | Otro estado         | Sí              | No              |\n  # | Otro estado         | No              | No              |",
+        "status": "Pendiente",
+        "evidence": ""
+      },
+      {
+        "text": "Scenario 16: Outline 8: Verificar visibilidad del enlace \"Editar Solicitud\" según estado y botón\n    Given que el analista de mesa de control ha <EstadoBoton> el botón \"Permisos de edición del Kam\"\n    When el Kam visualiza la gestión de cuentas con estado \"<EstadoSolicitud>\"\n    Then el Kam <VisualizaEnlace>\n\n    Examples:\n      | EstadoSolicitud    | EstadoBoton  | VisualizaEnlace            |\n      | Aprobado           | habilitado   | visualiza el enlace        |\n      | Aprobado           | deshabilitado| no visualiza el enlace     |\n      | Operando           | habilitado   | visualiza el enlace        |\n      | Operando           | deshabilitado| no visualiza el enlace     |\n      | Listo para Operar  | habilitado   | visualiza el enlace        |\n      | Listo para Operar  | deshabilitado| no visualiza el enlace     |\n      | Pendiente          | habilitado   | no visualiza el enlace     |\n      | Pendiente          | deshabilitado| no visualiza el enlace     |",
+        "status": "Pendiente",
+        "evidence": ""
+      }
+    ]
   }
 ]
